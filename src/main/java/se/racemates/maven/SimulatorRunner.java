@@ -3,30 +3,30 @@ package se.racemates.maven;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.concurrent.TimeUnit;
 
 public class SimulatorRunner {
 
+    private Process simulatorProcess;
+    private Process programProcess;
 
-    public static InputStream run(
+    public InputStream run(
             String sdkPath,
             String programFile
     ) throws IOException, InterruptedException {
 
         final ProcessBuilder processBuilder = new ProcessBuilder(sdkPath + "\\simulator.exe");
-        final Process simulator = processBuilder.inheritIO().start();
+        simulatorProcess = processBuilder.inheritIO().start();
         new Thread() {
             @Override
             public void run() {
                 try {
-                    simulator.waitFor();
+                    simulatorProcess.waitFor();
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
             }
         }.start();
 
-        Process programProcess = null;
         for (int tries = 0; tries < 5; tries++) {
             Process transferFile = null;
             for (int port = 1234; port < 1239; port++) {
@@ -63,6 +63,21 @@ public class SimulatorRunner {
 
         return programProcess.getInputStream();
     }
+
+    public void killProgramProcess() {
+        kippProcessIfActive(this.programProcess);
+    }
+
+    public void killSimulatorProcess() {
+        kippProcessIfActive(this.simulatorProcess);
+    }
+
+    private void kippProcessIfActive(final Process process) {
+        if (process != null && process.isAlive()) {
+            process.destroy();
+        }
+    }
+
 
     private static Process pushProgram(int port, String sdkPath, String programFile) throws IOException {
         final String name = new File(programFile).getName();

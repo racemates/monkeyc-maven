@@ -12,7 +12,8 @@ public class SimulatorRunnerTest {
 
     @org.junit.Test
     public void pickUpOuputFromProgram() throws Exception {
-        final InputStream inputStream = SimulatorRunner.run(
+        final SimulatorRunner simulatorRunner = new SimulatorRunner();
+        final InputStream inputStream = simulatorRunner.run(
                 "C:\\garmin\\sdk1_2_2\\bin",
                 "C:\\garmin\\workspace\\connectiq-run\\src\\test\\resources\\logsome.prg"
         );
@@ -35,7 +36,8 @@ public class SimulatorRunnerTest {
 
         } catch (IOException ioe) {
             ioe.printStackTrace();
-
+        } finally {
+            simulatorRunner.killProgramProcess();
         }
     }
 }

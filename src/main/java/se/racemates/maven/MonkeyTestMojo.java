@@ -31,23 +31,29 @@ public class MonkeyTestMojo
             outputFile.mkdirs();
         }
 
+        SimulatorRunner simulatorRunner = new SimulatorRunner();
         BufferedWriter fileWriter = null;
         InputStream inputStream = null;
         try {
             fileWriter = new BufferedWriter(new FileWriter(outputFile));
 
-            inputStream = SimulatorRunner.run(sdkPath, programFile);
+            inputStream = simulatorRunner.run(sdkPath, programFile);
             InputStreamReader isr = new InputStreamReader(inputStream);
             BufferedReader br = new BufferedReader(isr);
             for (String line = br.readLine();
                  line != null;
                  line = br.readLine()) {
+                if (line.startsWith("-->EOF")) {
+                    fileWriter.newLine();
+                    fileWriter.close();
+                    break;
+                }
 
-                System.out.println(line);
                 if (line.startsWith("-->")) {
                     fileWriter.write(line);
                     fileWriter.newLine();
                 }
+
             }
         } catch (IOException e) {
             throw new MojoExecutionException("Error creating file " + outputFile, e);
@@ -68,6 +74,8 @@ public class MonkeyTestMojo
                     // ignore
                 }
             }
+            simulatorRunner.killProgramProcess();
+            simulatorRunner.killSimulatorProcess();
         }
     }
 }
