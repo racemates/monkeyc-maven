@@ -92,8 +92,7 @@ public class SimulatorRunner {
                                 "--transport=tcp",
                                 "--transport_args=127.0.0.1:" + port,
                                 "tvm",
-                                "0:/GARMIN/APPS/" + name,
-                                "1"
+                                "0:/GARMIN/APPS/" + name
                         ).start();
 
     }

@@ -67,8 +67,7 @@ public class Mojo
             final InputStream inputStream = SimulatorRunner.run(sdkPath, programFile);
             InputStreamReader isr = new InputStreamReader(inputStream);
             BufferedReader br = new BufferedReader(isr);
-            String line;
-            for (line = br.readLine();
+            for (String line = br.readLine();
                  line != null;
                  line = br.readLine()) {
 

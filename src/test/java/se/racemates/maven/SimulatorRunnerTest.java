@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertTrue;
 
 public class SimulatorRunnerTest {
 
@@ -18,17 +19,18 @@ public class SimulatorRunnerTest {
 
         try {
             InputStreamReader isr = new InputStreamReader(inputStream);
-            BufferedReader br = new BufferedReader(isr);
-            String line;
-            for (line = br.readLine();
-                 line != null;
-                 line = br.readLine()) {
-                System.out.println(line);
-                if (line.startsWith("-->")) {
+            StringBuffer input = new StringBuffer();
+            for (int chr = isr.read();
+                 chr != -1;
+                 chr = isr.read()) {
+                System.out.println("partial:" + input);
+                input.append((char) chr);
+                if (input.toString().contains("-->")) {
+                    System.out.println("success:" + input);
                     break;
                 }
             }
-            assertEquals("Tagged line picked up", "-->This line should be picked up", line);
+            assertTrue("Tagged line picked up", input.toString().contains("-->"));
 
         } catch (IOException ioe) {
             ioe.printStackTrace();
