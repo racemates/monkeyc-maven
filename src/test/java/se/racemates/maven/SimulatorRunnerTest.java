@@ -31,6 +31,7 @@ public class SimulatorRunnerTest {
                 }
             }
             assertTrue("Tagged line picked up", input.toString().contains("-->"));
+            isr.close();
 
         } catch (IOException ioe) {
             ioe.printStackTrace();
