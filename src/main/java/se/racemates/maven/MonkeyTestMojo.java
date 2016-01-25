@@ -28,7 +28,8 @@ public class MonkeyTestMojo
 
         if (!outputFile.exists()) {
             //noinspection ResultOfMethodCallIgnored
-            outputFile.mkdirs();
+            outputFile.getParentFile().mkdirs();
+
         }
 
         SimulatorRunner simulatorRunner = new SimulatorRunner();
@@ -44,14 +45,12 @@ public class MonkeyTestMojo
                  line != null;
                  line = br.readLine()) {
                 if (line.startsWith("-->EOF")) {
-                    fileWriter.newLine();
                     fileWriter.close();
                     break;
                 }
 
                 if (line.startsWith("-->")) {
-                    fileWriter.write(line);
-                    fileWriter.newLine();
+                    fileWriter.write(line.substring(3));
                 }
 
             }

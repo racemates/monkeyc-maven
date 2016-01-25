@@ -14,7 +14,7 @@ public class SimulatorRunner {
             String programFile
     ) throws IOException, InterruptedException {
 
-        final ProcessBuilder processBuilder = new ProcessBuilder(sdkPath + "\\simulator.exe");
+        final ProcessBuilder processBuilder = new ProcessBuilder(sdkPath + "/bin/simulator.exe");
         simulatorProcess = processBuilder.inheritIO().start();
         new Thread() {
             @Override
@@ -47,7 +47,7 @@ public class SimulatorRunner {
         assert programProcess != null;
 
         final StreamGobbler errorGobbler = new StreamGobbler(programProcess.getErrorStream(), System.err);
- ;      final Process finalProgramProcess = programProcess;
+        final Process finalProgramProcess = programProcess;
 
         new Thread() {
             @Override
@@ -87,7 +87,7 @@ public class SimulatorRunner {
                 new ProcessBuilder().
                         inheritIO().
                         command(
-                                sdkPath + "\\shell.exe",
+                                sdkPath + "/bin/shell.exe",
                                 "--transport=tcp",
                                 "--transport_args=127.0.0.1:" + port,
                                 "push",
@@ -103,7 +103,7 @@ public class SimulatorRunner {
         return
                 new ProcessBuilder().
                         command(
-                                sdkPath + "\\shell.exe",
+                                sdkPath + "/bin/shell.exe",
                                 "--transport=tcp",
                                 "--transport_args=127.0.0.1:" + port,
                                 "tvm",

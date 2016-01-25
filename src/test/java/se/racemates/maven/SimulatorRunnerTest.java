@@ -1,11 +1,9 @@
 package se.racemates.maven;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 
 public class SimulatorRunnerTest {
@@ -14,20 +12,18 @@ public class SimulatorRunnerTest {
     public void pickUpOuputFromProgram() throws Exception {
         final SimulatorRunner simulatorRunner = new SimulatorRunner();
         final InputStream inputStream = simulatorRunner.run(
-                "C:\\garmin\\sdk1_2_2\\bin",
-                "C:\\garmin\\workspace\\connectiq-run\\src\\test\\resources\\logsome.prg"
+                "C:/garmin/sdk1_2_2",
+                "C:/garmin/workspace/connectiq-run/src/test/resources/logsome.prg"
         );
 
         try {
             InputStreamReader isr = new InputStreamReader(inputStream);
-            StringBuffer input = new StringBuffer();
+            StringBuilder input = new StringBuilder();
             for (int chr = isr.read();
                  chr != -1;
                  chr = isr.read()) {
-                System.out.println("partial:" + input);
                 input.append((char) chr);
                 if (input.toString().contains("-->")) {
-                    System.out.println("success:" + input);
                     break;
                 }
             }
@@ -38,6 +34,7 @@ public class SimulatorRunnerTest {
             ioe.printStackTrace();
         } finally {
             simulatorRunner.killProgramProcess();
+            simulatorRunner.killSimulatorProcess();
         }
     }
 }
