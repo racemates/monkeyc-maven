@@ -2,6 +2,7 @@ package se.racemates.maven;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -14,7 +15,7 @@ import java.io.*;
 public class MonkeyTestMojo
         extends AbstractMojo {
 
-    @Parameter(defaultValue = "${project.build.directory}/surefire-reports/TEST-connectiq.xml")
+    @Parameter(defaultValue = "${project.build.directory}/monkey-reports/monkey-report.txt")
     private File outputFile;
 
     @Parameter(defaultValue = "${project.build.directory}/${project.build.finalName}")
@@ -44,13 +45,21 @@ public class MonkeyTestMojo
             for (String line = br.readLine();
                  line != null;
                  line = br.readLine()) {
+
                 if (line.startsWith("-->EOF")) {
                     fileWriter.close();
                     break;
                 }
 
+                if (line.startsWith("-->FAILURE")) {
+                    fileWriter.close();
+                    throw new MojoExecutionException("Failed due to test errors");
+                }
+
                 if (line.startsWith("-->")) {
-                    fileWriter.write(line.substring(3));
+                    final String reportLine = line.substring(3);
+                    fileWriter.write(reportLine);
+                    getLog().info(reportLine);
                 }
 
             }
