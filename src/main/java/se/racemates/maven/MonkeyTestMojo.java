@@ -45,10 +45,10 @@ public class MonkeyTestMojo
                         this.sdkPath,
                         this.programFile
                 );
-                BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))
         ) {
             String line;
-            while ((line = br.readLine()) != null) {
+            while ((line = bufferedReader.readLine()) != null) {
 
                 if (line.startsWith("-->EOF")) {
                     fileWriter.close();
