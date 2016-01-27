@@ -9,7 +9,7 @@ import static junit.framework.TestCase.assertTrue;
 public class SimulatorRunnerTest {
 
     @org.junit.Test
-    public void pickUpOuputFromProgram() throws Exception {
+    public void pickUpOutputFromProgram() throws Exception {
 
         try (
                 final SimulatorRunner simulatorRunner = new SimulatorRunner(
@@ -28,17 +28,13 @@ public class SimulatorRunnerTest {
                  chr != -1;
                  chr = inputStreamReader.read()) {
                 input.append((char) chr);
-                if (input
-                        .toString()
-                        .contains("-->")) {
+                if (input.toString().contains("-->")) {
                     break;
                 }
             }
             assertTrue(
                     "Tagged line picked up",
-                    input
-                            .toString()
-                            .contains("-->")
+                    input.toString().contains("-->")
             );
         }
     }
