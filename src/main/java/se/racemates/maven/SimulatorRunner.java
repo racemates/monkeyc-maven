@@ -3,11 +3,12 @@ package se.racemates.maven;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class SimulatorRunner {
+public class SimulatorRunner implements Closeable {
 
     public static final int PORT_SCAN_START = 1234;
     public static final int PORT_SCAN_END = 1239;
@@ -15,9 +16,14 @@ public class SimulatorRunner {
     private Process simulatorProcess;
     private Process programProcess;
     private final Log log;
+    private final boolean runOnce;
 
-    public SimulatorRunner(final Log log) {
+    public SimulatorRunner(
+            final Log log,
+            final boolean runOnce
+    ) {
         this.log = log;
+        this.runOnce = runOnce;
     }
 
     public InputStream run(
@@ -171,4 +177,11 @@ public class SimulatorRunner {
                 .start();
     }
 
+    @Override
+    public void close() throws IOException {
+        killProgramProcess();
+        if (this.runOnce) {
+            killSimulatorProcess();
+        }
+    }
 }

@@ -33,12 +33,13 @@ public class MonkeyTestMojo
             this.outputFile
                     .getParentFile()
                     .mkdirs();
-
         }
 
-        final SimulatorRunner simulatorRunner = new SimulatorRunner(getLog());
-
         try (
+                final SimulatorRunner simulatorRunner = new SimulatorRunner(
+                        getLog(),
+                        this.runOnce
+                );
                 BufferedWriter fileWriter = new BufferedWriter(new FileWriter(this.outputFile));
                 InputStream inputStream = simulatorRunner.run(
                         this.sdkPath,
@@ -71,11 +72,6 @@ public class MonkeyTestMojo
                     "Error creating file " + this.outputFile,
                     e
             );
-        } finally {
-            simulatorRunner.killProgramProcess();
-            if (this.runOnce) {
-                simulatorRunner.killSimulatorProcess();
-            }
         }
     }
 }
