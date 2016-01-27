@@ -4,29 +4,28 @@ import java.io.*;
 
 class StreamGobbler extends Thread {
 
-    private final InputStream is;
-    private final PrintStream out;
+    private final InputStream inputStream;
+    private final PrintStream printStream;
 
     public StreamGobbler(
-            final InputStream is,
-            final PrintStream out
+            final InputStream inputStream,
+            final PrintStream printStream
     ) {
-        this.is = is;
-        this.out = out;
+        this.inputStream = inputStream;
+        this.printStream = printStream;
     }
 
     public void run() {
-        try {
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
-            for (String line = br.readLine();
-                 line != null;
-                 line = br.readLine()) {
-                out.println(line);
+        try (
+                final BufferedReader bufferedReader =
+                        new BufferedReader(new InputStreamReader(this.inputStream))
+        ) {
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                this.printStream.println(line);
             }
-
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
+        } catch (final IOException ioe) {
+            throw new RuntimeException(ioe);
         }
     }
 }

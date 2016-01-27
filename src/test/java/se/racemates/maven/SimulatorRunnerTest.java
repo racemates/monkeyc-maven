@@ -1,5 +1,7 @@
 package se.racemates.maven;
 
+import org.apache.maven.plugin.logging.SystemStreamLog;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,7 +12,7 @@ public class SimulatorRunnerTest {
 
     @org.junit.Test
     public void pickUpOuputFromProgram() throws Exception {
-        final SimulatorRunner simulatorRunner = new SimulatorRunner();
+        final SimulatorRunner simulatorRunner = new SimulatorRunner(new SystemStreamLog());
         final InputStream inputStream = simulatorRunner.run(
                 "C:/garmin/sdk1_2_2",
                 "C:/garmin/workspace/connectiq-run/src/test/resources/logsome.prg"
