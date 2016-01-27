@@ -18,6 +18,9 @@ public class MonkeyTestMojo
     @Parameter(defaultValue = "${project.build.directory}/monkey-reports/monkey-report.txt")
     private File outputFile;
 
+    @Parameter(defaultValue = "true")
+    private boolean runOnce;
+
     @Parameter(defaultValue = "${project.build.directory}/${project.build.finalName}")
     private String programFile;
 
@@ -83,7 +86,9 @@ public class MonkeyTestMojo
                 }
             }
             simulatorRunner.killProgramProcess();
-            simulatorRunner.killSimulatorProcess();
+            if (runOnce) {
+                simulatorRunner.killSimulatorProcess();
+            }
         }
     }
 }
