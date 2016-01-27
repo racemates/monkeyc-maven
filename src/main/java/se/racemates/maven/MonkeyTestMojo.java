@@ -28,25 +28,26 @@ public class MonkeyTestMojo
 
     public void execute()
             throws MojoExecutionException {
-
-        if (!outputFile.exists()) {
+        if (!this.outputFile.exists()) {
             //noinspection ResultOfMethodCallIgnored
-            outputFile.getParentFile().mkdirs();
+            this.outputFile
+                    .getParentFile()
+                    .mkdirs();
 
         }
 
-        SimulatorRunner simulatorRunner = new SimulatorRunner(getLog());
-        BufferedWriter fileWriter = null;
-        InputStream inputStream = null;
-        try {
-            fileWriter = new BufferedWriter(new FileWriter(outputFile));
+        final SimulatorRunner simulatorRunner = new SimulatorRunner(getLog());
 
-            inputStream = simulatorRunner.run(sdkPath, programFile);
-            InputStreamReader isr = new InputStreamReader(inputStream);
-            BufferedReader br = new BufferedReader(isr);
-            for (String line = br.readLine();
-                 line != null;
-                 line = br.readLine()) {
+        try (
+                BufferedWriter fileWriter = new BufferedWriter(new FileWriter(this.outputFile));
+                InputStream inputStream = simulatorRunner.run(
+                        this.sdkPath,
+                        this.programFile
+                );
+                BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))
+        ) {
+            String line;
+            while ((line = br.readLine()) != null) {
 
                 if (line.startsWith("-->EOF")) {
                     fileWriter.close();
@@ -63,29 +64,16 @@ public class MonkeyTestMojo
                     fileWriter.write(reportLine);
                     getLog().info(reportLine);
                 }
+            }
 
-            }
-        } catch (IOException e) {
-            throw new MojoExecutionException("Error creating file " + outputFile, e);
-        } catch (InterruptedException e) {
-            throw new MojoExecutionException("Error", e);
+        } catch (final IOException e) {
+            throw new MojoExecutionException(
+                    "Error creating file " + this.outputFile,
+                    e
+            );
         } finally {
-            if (fileWriter != null) {
-                try {
-                    fileWriter.close();
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    // ignore
-                }
-            }
             simulatorRunner.killProgramProcess();
-            if (runOnce) {
+            if (this.runOnce) {
                 simulatorRunner.killSimulatorProcess();
             }
         }

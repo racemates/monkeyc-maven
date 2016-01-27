@@ -1,5 +1,6 @@
 package se.racemates.maven;
 
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 
 import java.io.File;
@@ -22,76 +23,98 @@ public class SimulatorRunner {
     public InputStream run(
             final String sdkPath,
             final String programFile
-    ) throws IOException, InterruptedException {
-        final ProcessBuilder processBuilder = new ProcessBuilder(sdkPath + "/bin/simulator.exe");
-        this.simulatorProcess = processBuilder.start();
+    ) throws MojoExecutionException {
 
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    final StreamGobbler simulatorErrorStreamGobbler = new StreamGobbler(
-                            simulatorProcess.getErrorStream(),
-                            System.err
-                    );
-                    final StreamGobbler simulatorOutputStreamGobbler = new StreamGobbler(
-                            simulatorProcess.getInputStream(),
-                            System.out
-                    );
-                    simulatorErrorStreamGobbler.start();
-                    simulatorOutputStreamGobbler.start();
-                    SimulatorRunner.this.simulatorProcess.waitFor();
-                } catch (final InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }.start();
+        startSimulatorThread(sdkPath);
 
-        for (int tries = 0; tries < 5; tries++) {
-            Process transferFile = null;
+        this.programProcess = transferAndStartProgram(
+                sdkPath,
+                programFile
+        );
+
+        return this.programProcess.getInputStream();
+    }
+
+    private Process transferAndStartProgram(
+            final String sdkPath,
+            final String programFile
+    ) throws MojoExecutionException {
+
+        for (@SuppressWarnings("LocalCanBeFinal") int tries = 0; tries < 5; tries++) {
+            Process transferFile;
             for (int port = PORT_SCAN_START; port < PORT_SCAN_END; port++) {
-                transferFile = pushProgram(
-                        port,
-                        sdkPath,
-                        programFile
-                );
-                transferFile.waitFor();
-                this.log.debug("Exit value from shell transfer file:" + transferFile.exitValue());
-                if (transferFile.exitValue() == 0) {
-                    this.programProcess = startProgram(
+                try {
+                    transferFile = pushProgram(
                             port,
                             sdkPath,
                             programFile
                     );
-                    break;
+                    transferFile.waitFor();
+                    this.log.debug("Exit value from shell transfer file:" + transferFile.exitValue());
+                    if (transferFile.exitValue() == 0) {
+                        return startProgramProcess(
+                                sdkPath,
+                                programFile,
+                                port
+                        );
+                    }
+                    Thread.sleep(SLEEP_TIME_BETWEEN_TRIES_TO_FIND_SIMULATOR);
+                } catch (IOException | InterruptedException e) {
+                    throw new MojoExecutionException(
+                            "Failed to transfer file to simulator.",
+                            e
+                    );
                 }
             }
-            if (transferFile.exitValue() == 0) {
-                break;
-            }
-            Thread.sleep(SLEEP_TIME_BETWEEN_TRIES_TO_FIND_SIMULATOR);
         }
 
-        final StreamGobbler errorGobbler = new StreamGobbler(
-                this.programProcess.getErrorStream(),
-                System.err
+        throw new MojoExecutionException("Failed to transfer file to simulator.");
+    }
+
+    private Process startProgramProcess(
+            final String sdkPath,
+            final String programFile,
+            final int port
+    ) throws IOException {
+
+        final Process startProgram = startProgram(
+                port,
+                sdkPath,
+                programFile
         );
 
-        final Process finalProgramProcess = this.programProcess;
+        final StreamGobbler errorGobbler = new StreamGobbler(
+                startProgram.getErrorStream(),
+                System.err
+        );
+        errorGobbler.start();
 
         new Thread() {
             @Override
             public void run() {
                 try {
-                    finalProgramProcess.waitFor();
+                    startProgram.waitFor();
                 } catch (final InterruptedException e) {
                     throw new RuntimeException(e);
                 }
             }
         }.start();
-        errorGobbler.start();
 
-        return this.programProcess.getInputStream();
+        return startProgram;
+    }
+
+    private void startSimulatorThread(final String sdkPath) throws MojoExecutionException {
+        final ProcessBuilder processBuilder = new ProcessBuilder(sdkPath + "/bin/simulator.exe");
+        try {
+            this.simulatorProcess = processBuilder.start();
+        } catch (final IOException e) {
+            throw new MojoExecutionException(
+                    "Could not start simulator",
+                    e
+            );
+        }
+
+        new SimulatorThread(this.simulatorProcess).start();
     }
 
     public void killProgramProcess() {
@@ -108,50 +131,45 @@ public class SimulatorRunner {
         }
     }
 
-
-    private static Process pushProgram(
+    private Process pushProgram(
             final int port,
             final String sdkPath,
             final String programFile
     ) throws IOException {
+
         final String name = new File(programFile).getName();
-        System.out.println("pushProgram port:" + port);
+        this.log.debug("pushProgram port:" + port);
 
-        return
-                new ProcessBuilder()
-                        .
-                                inheritIO()
-                        .
-                                command(
-                                        sdkPath + "/bin/shell.exe",
-                                        "--transport=tcp",
-                                        "--transport_args=127.0.0.1:" + port,
-                                        "push",
-                                        "\"" + programFile + "\"",
-                                        "0:/GARMIN/APPS/" + name
-                                )
-                        .start();
-
+        return new ProcessBuilder()
+                .inheritIO()
+                .command(
+                        sdkPath + "/bin/shell.exe",
+                        "--transport=tcp",
+                        "--transport_args=127.0.0.1:" + port,
+                        "push",
+                        "\"" + programFile + "\"",
+                        "0:/GARMIN/APPS/" + name
+                ).start();
     }
 
-    private static Process startProgram(
+    private Process startProgram(
             final int port,
             final String sdkPath,
             final String programFile
     ) throws IOException {
-        final String name = new File(programFile).getName();
-        System.out.println("name:" + name + " port:" + port);
-        return
-                new ProcessBuilder()
-                        .
-                                command(
-                                        sdkPath + "/bin/shell.exe",
-                                        "--transport=tcp",
-                                        "--transport_args=127.0.0.1:" + port,
-                                        "tvm",
-                                        "0:/GARMIN/APPS/" + name
-                                )
-                        .start();
 
+        final String name = new File(programFile).getName();
+        this.log.debug("name:" + name + " port:" + port);
+
+        return new ProcessBuilder()
+                .command(
+                        sdkPath + "/bin/shell.exe",
+                        "--transport=tcp",
+                        "--transport_args=127.0.0.1:" + port,
+                        "tvm",
+                        "0:/GARMIN/APPS/" + name
+                )
+                .start();
     }
+
 }
