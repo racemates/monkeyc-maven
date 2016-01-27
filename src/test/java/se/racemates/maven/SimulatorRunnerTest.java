@@ -18,21 +18,28 @@ public class SimulatorRunnerTest {
                 "C:/garmin/workspace/connectiq-run/src/test/resources/logsome.prg"
         );
 
-        try {
-            InputStreamReader isr = new InputStreamReader(inputStream);
-            StringBuilder input = new StringBuilder();
+
+        try (
+                final InputStreamReader isr = new InputStreamReader(inputStream)
+        ) {
+            final StringBuilder input = new StringBuilder();
+
             for (int chr = isr.read();
                  chr != -1;
                  chr = isr.read()) {
                 input.append((char) chr);
-                if (input.toString().contains("-->")) {
+                if (input
+                        .toString()
+                        .contains("-->")) {
                     break;
                 }
             }
-            assertTrue("Tagged line picked up", input.toString().contains("-->"));
-            isr.close();
-
-        } catch (IOException ioe) {
+            assertTrue("Tagged line picked up",
+                       input
+                               .toString()
+                               .contains("-->")
+            );
+        } catch (final IOException ioe) {
             ioe.printStackTrace();
         } finally {
             simulatorRunner.killProgramProcess();

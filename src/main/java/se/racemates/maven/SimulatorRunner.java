@@ -141,7 +141,6 @@ public class SimulatorRunner {
         this.log.debug("pushProgram port:" + port);
 
         return new ProcessBuilder()
-                .inheritIO()
                 .command(
                         sdkPath + "/bin/shell.exe",
                         "--transport=tcp",
