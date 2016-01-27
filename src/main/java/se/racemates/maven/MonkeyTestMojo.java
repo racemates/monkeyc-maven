@@ -41,11 +41,11 @@ public class MonkeyTestMojo
                         this.runOnce
                 );
                 BufferedWriter fileWriter = new BufferedWriter(new FileWriter(this.outputFile));
-                InputStream inputStream = simulatorRunner.run(
+
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(simulatorRunner.run(
                         this.sdkPath,
                         this.programFile
-                );
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream))
+                )))
         ) {
             String line;
             while ((line = bufferedReader.readLine()) != null) {
