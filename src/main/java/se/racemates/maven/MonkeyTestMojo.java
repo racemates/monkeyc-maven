@@ -29,15 +29,15 @@ public class MonkeyTestMojo
     public void execute()
             throws MojoExecutionException {
 
-        if (sdkPath == null) {
-            sdkPath = System.getenv("GARMIN_HOME");
+        if (this.sdkPath == null) {
+            this.sdkPath = System.getenv("GARMIN_HOME");
         }
 
-        if (sdkPath == null) {
+        if (this.sdkPath == null) {
             throw new MojoExecutionException("You need to set up sdkPath to point to your garmin sdk.");
         }
 
-        getLog().info("sdkPath is: " + sdkPath);
+        getLog().info("sdkPath is: " + this.sdkPath);
 
         if (!this.outputFile.exists()) {
             //noinspection ResultOfMethodCallIgnored

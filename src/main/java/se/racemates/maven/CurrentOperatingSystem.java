@@ -8,10 +8,12 @@ public class CurrentOperatingSystem {
         return os.contains("win");
     }
 
+    @SuppressWarnings("unused")
     public static boolean isMac() {
         return os.contains("mac");
     }
 
+    @SuppressWarnings("unused")
     public static boolean isUnix() {
         return  os.contains("nix") ||
                 os.contains("nux") ||
