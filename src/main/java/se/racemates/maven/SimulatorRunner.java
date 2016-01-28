@@ -13,6 +13,7 @@ public class SimulatorRunner implements Closeable {
     public static final int PORT_SCAN_START = 1234;
     public static final int PORT_SCAN_END = 1239;
     public static final int SLEEP_TIME_BETWEEN_TRIES_TO_FIND_SIMULATOR = 500;
+    private static final String OSExecutableSuffix = CurrentOperatingSystem.isWindows() ? ".exe" : "";
     private Process simulatorProcess;
     private Process programProcess;
     private final Log log;
@@ -110,7 +111,11 @@ public class SimulatorRunner implements Closeable {
     }
 
     private void startSimulatorThread(final String sdkPath) throws MojoExecutionException {
-        final ProcessBuilder processBuilder = new ProcessBuilder(sdkPath + "/bin/simulator.exe");
+
+        final ProcessBuilder processBuilder = new ProcessBuilder(
+                sdkPath + "/bin/simulator" + OSExecutableSuffix
+        );
+
         try {
             this.simulatorProcess = processBuilder.start();
         } catch (final IOException e) {
@@ -148,7 +153,7 @@ public class SimulatorRunner implements Closeable {
 
         return new ProcessBuilder()
                 .command(
-                        sdkPath + "/bin/shell.exe",
+                        sdkPath + "/bin/shell" + OSExecutableSuffix,
                         "--transport=tcp",
                         "--transport_args=127.0.0.1:" + port,
                         "push",
@@ -168,7 +173,7 @@ public class SimulatorRunner implements Closeable {
 
         return new ProcessBuilder()
                 .command(
-                        sdkPath + "/bin/shell.exe",
+                        sdkPath + "/bin/shell" + OSExecutableSuffix,
                         "--transport=tcp",
                         "--transport_args=127.0.0.1:" + port,
                         "tvm",
