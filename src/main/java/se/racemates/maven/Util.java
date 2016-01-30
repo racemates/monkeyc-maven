@@ -1,6 +1,6 @@
 package se.racemates.maven;
 
-public class CurrentOperatingSystem {
+public class Util {
 
     private static final String os = System.getProperty("os.name").toLowerCase();
 
@@ -19,5 +19,18 @@ public class CurrentOperatingSystem {
                 os.contains("nux") ||
                 os.contains("aix");
     }
+
+    public static String platformCommand(
+            final String path,
+            final String file
+    ) {
+        return path + "/" + file + (isWindows() ? ".exe" : "");
+    }
+
+
+    public static String platformResourceSeparator() {
+        return isWindows() ? ";" : ":";
+    }
+
 }
 

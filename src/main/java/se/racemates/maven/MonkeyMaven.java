@@ -20,23 +20,34 @@ public class MonkeyMaven extends AbstractMojo {
     @Parameter(defaultValue = "${project.build.directory}", required = true, readonly = true)
     private File projectBuildDirectory;
 
+    @Parameter
+    private String sdkPath;
+
     public void execute() throws MojoExecutionException {
 
+        if (this.sdkPath == null) {
+            this.sdkPath = System.getenv("GARMIN_HOME");
+        }
 
+        final File manifest = new File(this.baseDir, "manifest.xml");
+        final File bin = new File(this.baseDir, "bin/test.prg");
 
-        final File manifest = new File(baseDir, "manifest.xml");
-        final File bin = new File(baseDir, "bin/test.prg");
-
-        final File source = new File(baseDir, "source");
+        final File source = new File(this.baseDir, "source");
         final List<File> sources = new FileScanner(source, "mc").scan();
         final List<String> sourcePaths = sources.stream().map(File::getAbsolutePath).collect(Collectors.toList());
 
-        final File resource = new File(baseDir, "resources");
+        final File resource = new File(this.baseDir, "resources");
         final List<File> resources = new FileScanner(resource, "xml").scan();
-        final String resourcePathsString = resources.stream().map(File::getAbsolutePath).collect(Collectors.joining(":"));
+        final String resourcePathsString = resources
+                .stream()
+                .map(File::getAbsolutePath)
+                .collect(Collectors.joining(Util.platformResourceSeparator()));
 
         final List<String> commands = new ArrayList<>();
-        commands.add("monkeyc");
+        commands.add(
+                this.sdkPath + "/bin/" +
+                        "monkeyc" + (Util.isWindows() ? ".bat" : "")
+        );
         commands.add("-m");
         commands.add(manifest.getAbsolutePath());
         commands.add("-o");
@@ -46,7 +57,7 @@ public class MonkeyMaven extends AbstractMojo {
         commands.add(resourcePathsString);
 
         final ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command(commands).directory(baseDir);
+        processBuilder.command(commands).directory(this.baseDir);
 
         final Process process;
         final String result;
@@ -55,14 +66,14 @@ public class MonkeyMaven extends AbstractMojo {
             process = processBuilder.start();
             result = readString(process.getInputStream());
             errors = readString(process.getErrorStream());
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new MojoExecutionException("Unable to call process monkeyc: " + e.getMessage(), e);
         }
 
         final int exitValue;
         try {
             exitValue = process.waitFor();
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             throw new MojoExecutionException("Unable to wait for process: " + e.getMessage(), e);
         }
         System.out.println(errors);
@@ -72,9 +83,9 @@ public class MonkeyMaven extends AbstractMojo {
     }
 
     //TODO write own code
-    private static String readString(InputStream processInputStream) throws IOException {
-        BufferedReader inputStream = new BufferedReader(new InputStreamReader(processInputStream));
-        StringBuilder result = new StringBuilder();
+    private static String readString(final InputStream processInputStream) throws IOException {
+        final BufferedReader inputStream = new BufferedReader(new InputStreamReader(processInputStream));
+        final StringBuilder result = new StringBuilder();
         String line;
         while((line = inputStream.readLine()) != null) {
             result.append(line).append("\n");
