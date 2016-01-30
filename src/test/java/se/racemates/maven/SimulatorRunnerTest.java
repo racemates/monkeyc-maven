@@ -1,15 +1,15 @@
 package se.racemates.maven;
 
 import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 
 import java.io.InputStreamReader;
 
 import static junit.framework.TestCase.assertTrue;
 
-public class SimulatorRunnerTest {
+public class SimulatorRunnerTest extends AbstractMojoTestCase {
 
-    @org.junit.Test
-    public void pickUpOutputFromProgram() throws Exception {
+    public void testPickUpOutputFromProgram() throws Exception {
 
         try (
                 final SimulatorRunner simulatorRunner = new SimulatorRunner(
@@ -18,8 +18,8 @@ public class SimulatorRunnerTest {
                 );
 
                 final InputStreamReader inputStreamReader = new InputStreamReader(simulatorRunner.run(
-                        "C:/garmin/sdk1_2_2",
-                        "C:/garmin/workspace/connectiq-run/src/test/resources/logsome.prg"
+                        System.getenv("GARMIN_HOME"),
+                        getTestPath("logsome.prg")
                 ))
         ) {
             final StringBuilder input = new StringBuilder();
