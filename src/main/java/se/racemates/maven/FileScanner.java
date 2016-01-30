@@ -23,15 +23,17 @@ public class FileScanner {
 
     private void scanDirectory(final File baseFolder) {
         final File[] files = baseFolder.listFiles();
-        for (final File file : files) {
-            if (file.isDirectory()) {
-                scanDirectory(file);
-            } else {
-                final String fileName = file.getName();
-                final int index = fileName.lastIndexOf(".");
-                final String extension = fileName.substring(index + 1);
-                if (extension.equals(fileType)) {
-                    foundFiles.add(file);
+        if (files != null) {
+            for (final File file : files) {
+                if (file.isDirectory()) {
+                    scanDirectory(file);
+                } else {
+                    final String fileName = file.getName();
+                    final int index = fileName.lastIndexOf(".");
+                    final String extension = fileName.substring(index + 1);
+                    if (extension.equals(fileType)) {
+                        foundFiles.add(file);
+                    }
                 }
             }
         }

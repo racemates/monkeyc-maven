@@ -11,14 +11,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Mojo(name = "monkeyc", defaultPhase = LifecyclePhase.COMPILE)
-public class MonkeyMaven extends AbstractMojo {
+@Mojo(name = "compile", defaultPhase = LifecyclePhase.COMPILE)
+public class MonkeyCompileMojo extends AbstractMojo {
 
-    @Parameter(property = "baseDir", required = true)
-    private File baseDir;
+    @Parameter(property = "projectRoot", readonly = true)
+    private File projectRoot;
+
+    @Parameter(defaultValue = "${project.basedir}", readonly = true)
+    private File basedir;
 
     @Parameter(defaultValue = "${project.build.directory}", required = true, readonly = true)
     private File projectBuildDirectory;
+
+    @Parameter(defaultValue = "${project.build.finalName}", required = true, readonly = true)
+    private String targetFileName;
 
     @Parameter
     private String sdkPath;
@@ -29,14 +35,18 @@ public class MonkeyMaven extends AbstractMojo {
             this.sdkPath = System.getenv("GARMIN_HOME");
         }
 
-        final File manifest = new File(this.baseDir, "manifest.xml");
-        final File bin = new File(this.baseDir, "bin/test.prg");
+        if (this.projectRoot == null) {
+            this.projectRoot = basedir;
+        }
 
-        final File source = new File(this.baseDir, "source");
+        final File manifest = new File(this.projectRoot, "manifest.xml");
+        final File bin = new File(this.projectBuildDirectory, this.targetFileName + ".prg");
+
+        final File source = new File(this.projectRoot, "source");
         final List<File> sources = new FileScanner(source, "mc").scan();
         final List<String> sourcePaths = sources.stream().map(File::getAbsolutePath).collect(Collectors.toList());
 
-        final File resource = new File(this.baseDir, "resources");
+        final File resource = new File(this.projectRoot, "resources");
         final List<File> resources = new FileScanner(resource, "xml").scan();
         final String resourcePathsString = resources
                 .stream()
@@ -57,7 +67,7 @@ public class MonkeyMaven extends AbstractMojo {
         commands.add(resourcePathsString);
 
         final ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command(commands).directory(this.baseDir);
+        processBuilder.command(commands).directory(this.projectRoot);
 
         final Process process;
         final String result;
