@@ -111,14 +111,12 @@ public class SimulatorRunner implements Closeable {
 
     private void startSimulatorThread(final String sdkPath) throws MojoExecutionException {
 
-        final String simulatorPath = Util.platformCommand(
-                sdkPath + "/bin",
-                "simulator"
-        );
-        this.log.debug("Starting simulator process:" + simulatorPath);
+        final String simulatorPath = sdkPath + "/bin";
+        final String simulatorExecutable = simulatorPath + "/" + (Util.isWindows() ? "simulator.exe" : "connectiq");
+        this.log.debug("Starting simulator process:" + simulatorExecutable);
 
         final ProcessBuilder processBuilder = new ProcessBuilder(
-                simulatorPath
+                simulatorExecutable
         );
 
         try {
