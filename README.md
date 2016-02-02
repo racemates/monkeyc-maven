@@ -16,7 +16,7 @@ Then simply add the plugin to your pom file.
     <plugin>
         <groupId>se.racemates.maven</groupId>
         <artifactId>monkeyc-maven</artifactId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.1</version>
     </plugin>
 </plugins>
 ```
@@ -26,4 +26,3 @@ The plugin ties in to the default maven compile and test targets. Simply run:
 ```bash
 mvn clean install
 ```
-To build the project
