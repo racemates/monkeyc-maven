@@ -22,7 +22,13 @@ Then simply add the plugin to your pom file.
 ```
 
 ## Usage
-The plugin ties in to the default maven compile and test targets. Simply run:
+To compile run
 ```bash
-mvn clean install
+mvn monkeyc:compile
 ```
+And to run tests
+```bash
+mvn monkeyc:test
+```
+
+

@@ -8,7 +8,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.*;
 
-@Mojo(name = "monkeytest", defaultPhase = LifecyclePhase.TEST,
+@Mojo(name = "test", defaultPhase = LifecyclePhase.TEST,
         requiresOnline = false, requiresProject = true,
         threadSafe = false)
 public class MonkeyTestMojo
