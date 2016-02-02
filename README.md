@@ -30,5 +30,19 @@ And to run tests
 ```bash
 mvn monkeyc:test
 ```
-
-
+It's also possible to bind the plugins compile and test goals to the normal maven goal.
+```xml
+<executions>
+    <execution>
+        <id>monkeyc-maven</id>
+        <goals>
+            <goal>compile</goal>
+            <goal>test</goal>
+        </goals>
+    </execution>
+</executions>
+```
+Now simply run
+```bash
+mvn clean install
+```
