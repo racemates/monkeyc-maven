@@ -20,7 +20,7 @@ public class MonkeyTestMojo
     @Parameter(defaultValue = "true")
     private boolean runOnce;
 
-    @Parameter(defaultValue = "${project.build.directory}/${project.build.finalName}")
+    @Parameter(defaultValue = "${project.build.directory}/${project.name}-${project.version}.prg")
     private String programFile;
 
     @Parameter
@@ -36,6 +36,7 @@ public class MonkeyTestMojo
         if (this.sdkPath == null) {
             throw new MojoExecutionException("You need to set up sdkPath to point to your garmin sdk.");
         }
+
 
         getLog().info("sdkPath is: " + this.sdkPath);
 
@@ -63,7 +64,7 @@ public class MonkeyTestMojo
 
                 if (line.startsWith("-->EOF")) {
                     fileWriter.close();
-                    break;
+                    return;
                 }
 
                 if (line.startsWith("-->FAILURE")) {
