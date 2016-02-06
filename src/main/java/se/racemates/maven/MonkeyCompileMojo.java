@@ -2,6 +2,7 @@ package se.racemates.maven;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -10,6 +11,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Mojo(name = "compile", defaultPhase = LifecyclePhase.COMPILE)
@@ -70,38 +73,26 @@ public class MonkeyCompileMojo extends AbstractMojo {
         final ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(commands).directory(this.projectRoot);
 
-        final Process process;
-        final String result;
-        final String errors;
         try {
-            process = processBuilder.start();
-            result = readString(process.getInputStream());
-            errors = readString(process.getErrorStream());
+            final Process process = processBuilder.start();
+
+            final Logger infoLogger = Logger.info(process.getInputStream(), getLog());
+            infoLogger.start();
+
+            final Logger errorLogger = Logger.error(process.getErrorStream(), getLog());
+            errorLogger.start();
+
+            final int exitValue = process.waitFor();
+            infoLogger.join();
+            errorLogger.join();
+
+            if (exitValue != 0) {
+                throw new MojoExecutionException("Compilation error");
+            }
         } catch (final IOException e) {
             throw new MojoExecutionException("Unable to call process monkeyc: " + e.getMessage(), e);
-        }
-
-        final int exitValue;
-        try {
-            exitValue = process.waitFor();
         } catch (final InterruptedException e) {
             throw new MojoExecutionException("Unable to wait for process: " + e.getMessage(), e);
         }
-        System.out.println(errors);
-        System.out.println(result);
-        if (exitValue != 0) {
-            throw new MojoExecutionException("Compilation error");
-        }
-    }
-
-    //TODO write own code
-    private static String readString(final InputStream processInputStream) throws IOException {
-        final BufferedReader inputStream = new BufferedReader(new InputStreamReader(processInputStream));
-        final StringBuilder result = new StringBuilder();
-        String line;
-        while((line = inputStream.readLine()) != null) {
-            result.append(line).append("\n");
-        }
-        return result.toString().trim();
     }
 }
