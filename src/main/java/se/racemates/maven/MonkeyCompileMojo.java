@@ -89,8 +89,9 @@ public class MonkeyCompileMojo extends AbstractMojo {
         }
         System.out.println(errors);
         System.out.println(result);
-        System.out.println("Exit value: " + exitValue);
-
+        if (exitValue != 0) {
+            throw new MojoExecutionException("Compilation error");
+        }
     }
 
     //TODO write own code
