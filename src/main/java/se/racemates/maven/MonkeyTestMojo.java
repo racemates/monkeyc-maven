@@ -2,6 +2,7 @@ package se.racemates.maven;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -27,7 +28,7 @@ public class MonkeyTestMojo
     private String sdkPath;
 
     public void execute()
-            throws MojoExecutionException {
+            throws MojoExecutionException, MojoFailureException {
 
         if (this.sdkPath == null) {
             this.sdkPath = System.getenv("GARMIN_HOME");
@@ -69,7 +70,7 @@ public class MonkeyTestMojo
 
                 if (line.startsWith("-->FAILURE")) {
                     fileWriter.close();
-                    throw new MojoExecutionException("Failed due to test errors");
+                    throw new MojoFailureException("Failed due to test errors");
                 }
 
                 if (line.startsWith("-->")) {
