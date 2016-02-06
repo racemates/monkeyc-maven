@@ -17,5 +17,6 @@ public class MonkeyCompileMojoTest extends AbstractMojoTestCase {
         MonkeyCompileMojo monkeyCompileMojo = (MonkeyCompileMojo) lookupMojo("compile", pom);
         assertThat(monkeyCompileMojo, is(notNullValue()));
         monkeyCompileMojo.execute();
+
     }
 }
