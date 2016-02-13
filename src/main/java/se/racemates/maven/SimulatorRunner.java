@@ -59,6 +59,7 @@ public class SimulatorRunner implements Closeable {
                     transferFile.waitFor();
                     this.log.debug("Exit value from shell transfer file:" + transferFile.exitValue());
                     if (transferFile.exitValue() == 0) {
+                        this.log.info("Pushed file " + programFile + " to simulator.");
                         return startProgramProcess(
                                 sdkPath,
                                 programFile,

@@ -23,8 +23,8 @@ public class MonkeyTestMojo
     @Parameter(defaultValue = "true")
     private boolean runOnce;
 
-    @Parameter(defaultValue = "${project.build.directory}/${project.name}-${project.version}.prg")
-    private String programFile;
+    @Parameter(defaultValue = "${project.build.directory}/${project.build.finalName}.prg", required = true)
+    private String targetFileName;
 
     @Parameter
     private String sdkPath;
@@ -50,6 +50,11 @@ public class MonkeyTestMojo
                     .mkdirs();
         }
 
+        runSimulator();
+    }
+
+    private void runSimulator() throws MojoFailureException, MojoExecutionException {
+
         try (
                 final SimulatorRunner simulatorRunner = new SimulatorRunner(
                         getLog(),
@@ -60,10 +65,10 @@ public class MonkeyTestMojo
 
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(simulatorRunner.run(
                         this.sdkPath,
-                        this.programFile
+                        this.targetFileName
                 )))
         ) {
-            readOutput(
+            handleSimulatorOutput(
                     fileWriter,
                     bufferedReader,
                     simulatorRunner);
@@ -76,7 +81,7 @@ public class MonkeyTestMojo
         }
     }
 
-    private void readOutput(
+    private void handleSimulatorOutput(
             final BufferedWriter fileWriter,
             final BufferedReader bufferedReader,
             final SimulatorRunner simulatorRunner
