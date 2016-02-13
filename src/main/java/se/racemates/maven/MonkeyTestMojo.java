@@ -86,12 +86,6 @@ public class MonkeyTestMojo
 
         while (timeout++ < RETRIES) {
 
-            try {
-                Thread.sleep(WAIT_FOR_OUTPUT_MILLIS);
-            } catch (final InterruptedException e) {
-                //ignore
-            }
-
             if (simulatorRunner.hasProgramFailed()) {
                 throw new MojoFailureException("Program failed.");
             }
@@ -121,6 +115,12 @@ public class MonkeyTestMojo
                 if (line == null) {
                     throw new MojoFailureException("Unexpected exit from program.");
                 }
+            }
+
+            try {
+                Thread.sleep(WAIT_FOR_OUTPUT_MILLIS);
+            } catch (final InterruptedException e) {
+                //ignore
             }
         }
 
