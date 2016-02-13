@@ -15,6 +15,8 @@ import java.io.*;
 public class MonkeyTestMojo
         extends AbstractMojo {
 
+    public static final int RETRIES = 30;
+    public static final int WAIT_FOR_OUTPUT_MILLIS = 500;
     @Parameter(defaultValue = "${project.build.directory}/monkey-reports/monkey-report.txt")
     private File outputFile;
 
@@ -53,6 +55,7 @@ public class MonkeyTestMojo
                         getLog(),
                         this.runOnce
                 );
+
                 BufferedWriter fileWriter = new BufferedWriter(new FileWriter(this.outputFile));
 
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(simulatorRunner.run(
@@ -60,8 +63,44 @@ public class MonkeyTestMojo
                         this.programFile
                 )))
         ) {
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
+            readOutput(
+                    fileWriter,
+                    bufferedReader,
+                    simulatorRunner);
+
+        } catch (final IOException e) {
+            throw new MojoExecutionException(
+                    "Error creating file " + this.outputFile,
+                    e
+            );
+        }
+    }
+
+    private void readOutput(
+            final BufferedWriter fileWriter,
+            final BufferedReader bufferedReader,
+            final SimulatorRunner simulatorRunner
+    ) throws IOException, MojoFailureException {
+
+        int timeout = 0;
+
+        while (timeout++ < RETRIES) {
+
+            try {
+                Thread.sleep(WAIT_FOR_OUTPUT_MILLIS);
+            } catch (final InterruptedException e) {
+                //ignore
+            }
+
+            if (simulatorRunner.hasProgramFailed()) {
+                throw new MojoFailureException("Program failed.");
+            }
+
+            while (bufferedReader.ready()) {
+
+                timeout = 0;
+
+                final String line = bufferedReader.readLine();
 
                 if (line.startsWith("-->EOF")) {
                     fileWriter.close();
@@ -78,13 +117,14 @@ public class MonkeyTestMojo
                     fileWriter.write(reportLine);
                     getLog().info(reportLine);
                 }
-            }
 
-        } catch (final IOException e) {
-            throw new MojoExecutionException(
-                    "Error creating file " + this.outputFile,
-                    e
-            );
+                if (line == null) {
+                    throw new MojoFailureException("Unexpected exit from program.");
+                }
+            }
         }
+
+        throw new MojoFailureException("Waiting for test result timed out");
+
     }
 }

@@ -17,6 +17,7 @@ public class SimulatorRunner implements Closeable {
     private Process programProcess;
     private final Log log;
     private final boolean runOnce;
+    private boolean programFailed;
 
     public SimulatorRunner(
             final Log log,
@@ -100,6 +101,9 @@ public class SimulatorRunner implements Closeable {
             public void run() {
                 try {
                     startProgram.waitFor();
+                    if (startProgram.exitValue() != 0) {
+                        SimulatorRunner.this.programFailed = true;
+                    }
                 } catch (final InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -191,5 +195,9 @@ public class SimulatorRunner implements Closeable {
         if (this.runOnce) {
             killSimulatorProcess();
         }
+    }
+
+    public boolean hasProgramFailed() {
+        return this.programFailed;
     }
 }
