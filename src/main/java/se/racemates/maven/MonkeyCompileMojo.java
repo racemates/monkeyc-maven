@@ -48,7 +48,13 @@ public class MonkeyCompileMojo extends AbstractMojo {
 
         final File source = new File(this.projectRoot, "source");
         final List<File> sources = new FileScanner(source, "mc").scan();
-        final List<String> sourcePaths = sources.stream().map(File::getAbsolutePath).collect(Collectors.toList());
+        final DependencyHelper dependencyHelper = new DependencyHelper(sources);
+        final List<FileInfo> fileInfos = dependencyHelper.sortDependencies();
+        final List<String> sourcePaths = fileInfos
+                .stream()
+                .map(FileInfo::getFile)
+                .map(File::getAbsolutePath)
+                .collect(Collectors.toList());
 
         final File resource = new File(this.projectRoot, "resources");
         final List<File> resources = new FileScanner(resource, "xml").scan();
