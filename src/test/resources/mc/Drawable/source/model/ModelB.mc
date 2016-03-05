@@ -1,0 +1,3 @@
+class ModelB extends ModelA {
+
+}

@@ -17,13 +17,11 @@ public class DependencyHelper {
 
     public List<FileInfo> sortDependencies() {
         final List<FileInfo> result = new ArrayList<>();
-        final Optional<String> first = map.keySet().stream().findFirst();
-        if (first.isPresent()) {
-            checkDependencies(first.get());
-            index.forEach(key -> {
-                result.add(map.get(key));
-            });
-        }
+        map.keySet().forEach(this::checkDependencies);
+        index.forEach(key -> {
+            result.add(map.get(key));
+        });
+
         return result;
     }
 
@@ -62,7 +60,7 @@ public class DependencyHelper {
         return index;
     }
 
-    private List<String> getStrings(File file1) {
+    private List<String> getStrings(final File file1) {
         try {
             return Files.readAllLines(file1.toPath());
         } catch (IOException e) {

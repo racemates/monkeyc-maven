@@ -3,7 +3,6 @@ package se.racemates.maven;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -19,7 +18,9 @@ public class DependencyHelperTest {
         final DependencyHelper helper = new DependencyHelper(files);
         final List<FileInfo> fileInfos = helper.sortDependencies();
 
-        assertThat(files.size(), is(4));
-        assertThat(fileInfos.size(), is(4));
+        assertThat(files.size(), is(5));
+        assertThat(fileInfos.size(), is(5));
+
+        fileInfos.stream().map(FileInfo::getFile).forEach(System.out::println);
     }
 }
