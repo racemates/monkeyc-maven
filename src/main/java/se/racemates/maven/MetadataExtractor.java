@@ -14,7 +14,7 @@ public class MetadataExtractor {
 
     public MetadataExtractor(final List<String> strings) {
         this.strings = strings;
-        this.classPattern = Pattern.compile("\\s*class (\\w+)");
+        this.classPattern = Pattern.compile("\\s*(class|module) (\\w+)");
         this.dependenciesPattern = Pattern.compile("\\s*extends (\\w+)(?:,\\s*(\\w+))*");
     }
 
@@ -22,7 +22,7 @@ public class MetadataExtractor {
         for (final String string : this.strings) {
             final Matcher matcher = this.classPattern.matcher(string);
             if (matcher.find()) {
-                return Optional.ofNullable(matcher.group(1));
+                return Optional.ofNullable(matcher.group(2));
             }
         }
         return Optional.empty();

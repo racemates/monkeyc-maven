@@ -18,7 +18,7 @@ public class DependencyHelperTest {
         final DependencyHelper helper = new DependencyHelper(files);
         final List<FileInfo> fileInfos = helper.sortDependencies();
 
-        assertThat(files.size(), is(5));
-        assertThat(fileInfos.size(), is(5));
+        assertThat(files.size(), is(6));
+        assertThat(fileInfos.size(), is(6));
     }
 }

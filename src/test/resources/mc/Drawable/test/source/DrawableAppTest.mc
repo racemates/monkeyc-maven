@@ -6,7 +6,12 @@
 
 using Toybox.Application as App;
 
-class MyApp extends App.AppBase {
+class MyAppTest extends App.AppBase {
+
+    function initialize() {
+        AppBase.initialize();
+        Test.test();
+    }
 
     // onStart() is called on application start up
     function onStart() {

@@ -26,6 +26,20 @@ public class MetadataExtractorTest {
     }
 
     @Test
+    public void testModuleName() {
+        final List<String> strings = new ArrayList<>();
+        strings.add("");
+        strings.add("module Test {");
+        strings.add("hidden var test");
+        strings.add("}");
+
+        final MetadataExtractor metadataExtractor = new MetadataExtractor(strings);
+        final Optional<String> className = metadataExtractor.className();
+        assertThat(className.isPresent(), is(true));
+        assertThat(className.get(), is("Test"));
+    }
+
+    @Test
     public void testOneDependency() {
         final List<String> strings = new ArrayList<>();
         strings.add("");
@@ -53,4 +67,6 @@ public class MetadataExtractorTest {
         assertThat(dependencies.size(), is(1));
         assertThat(dependencies.get(0), is("Base1"));
     }
+
+
 }
