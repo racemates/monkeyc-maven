@@ -31,7 +31,8 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <projectSrcRoot>target/test-classes/mc/only-sources</projectSrcRoot>
+                    <projectSrcRoot>target/test-classes/mc/only-sources/main</projectSrcRoot>
+                    <projectTestRoot>target/test-classes/mc/only-sources/test</projectTestRoot>
                 </configuration>
             </plugin>
         </plugins>

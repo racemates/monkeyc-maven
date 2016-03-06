@@ -44,11 +44,11 @@ public class MonkeyCompileMojo extends AbstractMojo {
         }
 
         if (this.projectSrcRoot == null) {
-            this.projectSrcRoot = new File(basedir, "main/mc");
+            this.projectSrcRoot = new File(basedir, "src/main");
         }
 
         if (this.projectTestRoot == null) {
-            this.projectTestRoot = new File(basedir, "test/mc");
+            this.projectTestRoot = new File(basedir, "src/test");
         }
 
         final Compiler compiler = new Compiler(sdkPath, basedir, getLog());
