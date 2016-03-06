@@ -55,8 +55,6 @@ public class Compiler {
         final ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(commands).directory(this.executionDir);
 
-        log.info(processBuilder.command().stream().collect(Collectors.joining(" ")));
-
         try {
             final Process process = processBuilder.start();
 
