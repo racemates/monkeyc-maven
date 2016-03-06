@@ -31,7 +31,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <projectRoot>target/test-classes/mc/Failable</projectRoot>
+                    <projectSrcRoot>target/test-classes/mc/Failable</projectSrcRoot>
                 </configuration>
             </plugin>
         </plugins>

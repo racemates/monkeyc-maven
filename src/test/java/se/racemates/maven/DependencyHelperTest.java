@@ -20,7 +20,5 @@ public class DependencyHelperTest {
 
         assertThat(files.size(), is(5));
         assertThat(fileInfos.size(), is(5));
-
-        fileInfos.stream().map(FileInfo::getFile).forEach(System.out::println);
     }
 }

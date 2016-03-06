@@ -24,9 +24,24 @@ public class MonkeyCompileMojoTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     @Test
-    public void testExecution_shouldSucced() throws Exception {
+    public void testExecution_shouldSucced_whenBothSourceAndTest() throws Exception {
         final Mojo compile = mojoRule.lookupMojo("compile", "src/test/resources/mc/Drawable/pom.xml");
         assertThat(compile, is(notNullValue()));
+        compile.execute();
+    }
+
+    @Test
+    public void testExecution_shouldSucced_whenOnlySource() throws Exception {
+        final Mojo compile = mojoRule.lookupMojo("compile", "src/test/resources/mc/only-sources/pom.xml");
+        assertThat(compile, is(notNullValue()));
+        compile.execute();
+    }
+
+    @Test
+    public void testExecution_shouldFail_whenEmptyProject() throws Exception {
+        final Mojo compile = mojoRule.lookupMojo("compile", "src/test/resources/mc/empty/pom.xml");
+        assertThat(compile, is(notNullValue()));
+        expectedException.expect(MojoExecutionException.class);
         compile.execute();
     }
 

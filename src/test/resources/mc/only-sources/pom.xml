@@ -31,8 +31,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <projectSrcRoot>target/test-classes/mc/Drawable/main</projectSrcRoot>
-                    <projectTestRoot>target/test-classes/mc/Drawable/test</projectTestRoot>
+                    <projectSrcRoot>target/test-classes/mc/only-sources</projectSrcRoot>
                 </configuration>
             </plugin>
         </plugins>
