@@ -13,10 +13,12 @@ using Toybox.Time.Gregorian as Calendar;
 class MyWatchView extends Ui.View {
 
     var train;
+    var model;
 
     //! Constructor
     function initialize() {
         train = new Rez.Drawables.train();
+        model = new ModelB();
     }
 
     //! Load your resources here
@@ -31,6 +33,7 @@ class MyWatchView extends Ui.View {
         dc.setColor(Gfx.COLOR_BLUE, Gfx.COLOR_BLACK);
         dc.fillRectangle(0, 0, dc.getWidth(), dc.getHeight());
         train.draw(dc);
+        Sys.println(model.getValue());
     }
 
 }
