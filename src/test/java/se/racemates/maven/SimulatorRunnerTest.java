@@ -19,7 +19,7 @@ public class SimulatorRunnerTest extends AbstractMojoTestCase {
 
                 final InputStreamReader inputStreamReader = new InputStreamReader(simulatorRunner.run(
                         System.getenv("GARMIN_HOME"),
-                        getTestPath("logsome.prg")
+                        getTestPath("logsome-test.prg")
                 ))
         ) {
             final StringBuilder input = new StringBuilder();

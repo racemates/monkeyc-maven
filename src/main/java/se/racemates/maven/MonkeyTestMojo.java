@@ -23,7 +23,7 @@ public class MonkeyTestMojo
     @Parameter(defaultValue = "true")
     private boolean runOnce;
 
-    @Parameter(defaultValue = "${project.build.directory}/${project.build.finalName}.prg", required = true)
+    @Parameter(defaultValue = "${project.build.directory}/${project.build.finalName}-test.prg", required = true)
     private String targetFileName;
 
     @Parameter
