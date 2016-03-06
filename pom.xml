@@ -1,14 +1,38 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <name>monkeyc-maven</name>
+    <modelVersion>4.0.0</modelVersion>
 
     <groupId>se.racemates.maven</groupId>
     <artifactId>monkeyc-maven</artifactId>
     <packaging>maven-plugin</packaging>
     <version>1.2</version>
 
-    <modelVersion>4.0.0</modelVersion>
+    <name>Monkey C Maven</name>
+    <description>A maven plugin for building Garmin Connect IQ projects</description>
+    <url>https://github.com/racemates/monkeyc-maven</url>
+
+    <licenses>
+        <license>
+            <name>GNU GPL, Version 3</name>
+            <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/racemates/monkeyc-maven</url>
+    </scm>
+
+    <developers>
+        <developer>
+            <name>Jonas Karlsson</name>
+            <email>jonas.karlsson@racemates.se</email>
+        </developer>
+        <developer>
+            <name>Johan Granlund</name>
+            <email>johan.granlund@racemates.se</email>
+        </developer>
+    </developers>
 
     <properties>
         <maven.version>3.2.1</maven.version>
