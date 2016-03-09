@@ -5,9 +5,11 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import se.racemates.maven.compile.MonkeyCompiler;
 import se.racemates.maven.test.SimulatorRunner;
 
 import java.io.*;
+import java.util.Arrays;
 
 @Mojo(name = "test", defaultPhase = LifecyclePhase.TEST,
         requiresOnline = false, requiresProject = true,
@@ -23,22 +25,9 @@ public class MonkeyTestMojo extends AbstractMonkeyMojo {
     @Parameter(defaultValue = "true")
     private boolean runOnce;
 
-    @Parameter
-    private String sdkPath;
-
-    public void execute()
-            throws MojoExecutionException, MojoFailureException {
-
-        if (this.sdkPath == null) {
-            this.sdkPath = System.getenv("GARMIN_HOME");
-        }
-
-        if (this.sdkPath == null) {
-            throw new MojoExecutionException("You need to set up sdkPath to point to your garmin sdk.");
-        }
-
-
-        getLog().info("sdkPath is: " + this.sdkPath);
+    @Override
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        super.execute();
 
         if (!this.testReportFile.exists()) {
             //noinspection ResultOfMethodCallIgnored
@@ -47,7 +36,15 @@ public class MonkeyTestMojo extends AbstractMonkeyMojo {
                     .mkdirs();
         }
 
-        runSimulator();
+        final MonkeyCompiler compiler = new MonkeyCompiler(sdkPath, basedir, getLog());
+        if (!this.projectTestRoot.exists()) {
+            getLog().info("No test sources found to compile");
+        } else {
+            final File testManifest = new File(this.projectTestRoot, MANIFEST_FILE_NAME);
+            final File testTarget = new File(this.projectBuildDirectory, this.targetFileName + TEST_BIN_SUFFIX);
+            compiler.compile(Arrays.asList(this.projectSrcRoot, this.projectTestRoot), testManifest, testTarget);
+            runSimulator();
+        }
     }
 
     private void runSimulator() throws MojoFailureException, MojoExecutionException {

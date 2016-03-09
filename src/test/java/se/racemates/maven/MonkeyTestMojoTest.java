@@ -29,13 +29,6 @@ public class MonkeyTestMojoTest {
         final File baseDirectory = temporaryFolder.newFolder();
         final File targetFolder = temporaryFolder.newFolder();
 
-        final MonkeyCompileMojo compile = (MonkeyCompileMojo) mojoRule.lookupMojo("compile", "src/test/resources/mc/logsome/pom.xml");
-        compile.setBasedir(baseDirectory);
-        compile.setProjectBuildDirectory(targetFolder);
-        compile.setTargetFileName(targetFileName);
-
-        compile.execute();
-
         final MonkeyTestMojo test = (MonkeyTestMojo) mojoRule.lookupMojo("test", "src/test/resources/mc/logsome/pom.xml");
 
         final TestLog log = new TestLog();
@@ -43,6 +36,7 @@ public class MonkeyTestMojoTest {
 
         final File testReportFile = new File(targetFolder, "monkey-reports/monkey-report.txt");
 
+        test.setBasedir(baseDirectory);
         test.setTestReportFile(testReportFile);
         test.setProjectBuildDirectory(targetFolder);
         test.setTargetFileName(targetFileName);
