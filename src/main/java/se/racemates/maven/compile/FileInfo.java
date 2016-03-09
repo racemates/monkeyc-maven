@@ -1,4 +1,4 @@
-package se.racemates.maven;
+package se.racemates.maven.compile;
 
 import java.io.File;
 import java.util.List;

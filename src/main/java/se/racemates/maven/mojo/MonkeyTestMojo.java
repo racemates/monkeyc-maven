@@ -1,11 +1,11 @@
-package se.racemates.maven;
+package se.racemates.maven.mojo;
 
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import se.racemates.maven.test.SimulatorRunner;
 
 import java.io.*;
 
@@ -16,14 +16,12 @@ public class MonkeyTestMojo extends AbstractMonkeyMojo {
 
     public static final int RETRIES = 30;
     public static final int WAIT_FOR_OUTPUT_MILLIS = 500;
+
     @Parameter(defaultValue = "${project.build.directory}/monkey-reports/monkey-report.txt")
-    private File outputFile;
+    private File testReportFile;
 
     @Parameter(defaultValue = "true")
     private boolean runOnce;
-
-    @Parameter(defaultValue = "${project.build.directory}/${project.build.finalName}-test.prg", required = true)
-    private String targetFileName;
 
     @Parameter
     private String sdkPath;
@@ -42,9 +40,9 @@ public class MonkeyTestMojo extends AbstractMonkeyMojo {
 
         getLog().info("sdkPath is: " + this.sdkPath);
 
-        if (!this.outputFile.exists()) {
+        if (!this.testReportFile.exists()) {
             //noinspection ResultOfMethodCallIgnored
-            this.outputFile
+            this.testReportFile
                     .getParentFile()
                     .mkdirs();
         }
@@ -60,11 +58,11 @@ public class MonkeyTestMojo extends AbstractMonkeyMojo {
                         this.runOnce
                 );
 
-                BufferedWriter fileWriter = new BufferedWriter(new FileWriter(this.outputFile));
+                BufferedWriter fileWriter = new BufferedWriter(new FileWriter(this.testReportFile));
 
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(simulatorRunner.run(
                         this.sdkPath,
-                        this.targetFileName
+                        getTestFilePath()
                 )))
         ) {
             handleSimulatorOutput(
@@ -74,7 +72,7 @@ public class MonkeyTestMojo extends AbstractMonkeyMojo {
 
         } catch (final IOException e) {
             throw new MojoExecutionException(
-                    "Error creating file " + this.outputFile,
+                    "Error creating file " + this.testReportFile,
                     e
             );
         }
@@ -136,11 +134,7 @@ public class MonkeyTestMojo extends AbstractMonkeyMojo {
 
     }
 
-    public void setOutputFile(File outputFile) {
-        this.outputFile = outputFile;
-    }
-
-    public void setTargetFileName(String targetFileName) {
-        this.targetFileName = targetFileName;
+    public void setTestReportFile(final File testReportFile) {
+        this.testReportFile = testReportFile;
     }
 }

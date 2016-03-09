@@ -1,10 +1,10 @@
-package se.racemates.maven;
+package se.racemates.maven.compile;
 
 import org.apache.maven.plugin.logging.Log;
 
 import java.io.*;
 
-class Logger extends Thread {
+public class Logger extends Thread {
 
     enum Level {
         INFO,

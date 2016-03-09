@@ -1,6 +1,7 @@
 package se.racemates.maven;
 
 import org.junit.Test;
+import se.racemates.maven.compile.MetadataExtractor;
 
 import java.util.ArrayList;
 import java.util.List;

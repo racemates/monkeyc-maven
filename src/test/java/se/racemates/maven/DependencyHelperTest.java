@@ -1,6 +1,9 @@
 package se.racemates.maven;
 
 import org.junit.Test;
+import se.racemates.maven.compile.DependencyHelper;
+import se.racemates.maven.compile.FileInfo;
+import se.racemates.maven.compile.FileScanner;
 
 import java.io.File;
 import java.util.List;

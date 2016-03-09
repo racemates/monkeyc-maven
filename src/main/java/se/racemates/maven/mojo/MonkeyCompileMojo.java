@@ -1,32 +1,16 @@
-package se.racemates.maven;
+package se.racemates.maven.mojo;
 
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import se.racemates.maven.compile.MonkeyCompiler;
 
-import java.io.*;
-import java.util.ArrayList;
+import java.io.File;
 import java.util.Arrays;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Mojo(name = "compile", defaultPhase = LifecyclePhase.COMPILE)
 public class MonkeyCompileMojo extends AbstractMonkeyMojo {
-
-    @Parameter(defaultValue = "${project.basedir}", readonly = true)
-    private File basedir;
-
-    @Parameter(defaultValue = "${project.build.directory}", required = true, readonly = true)
-    private File projectBuildDirectory;
-
-    @Parameter(defaultValue = "${project.build.finalName}", required = true, readonly = true)
-    private String targetFileName;
 
     @Parameter
     private String sdkPath;
@@ -45,7 +29,7 @@ public class MonkeyCompileMojo extends AbstractMonkeyMojo {
             this.projectTestRoot = new File(basedir, "src/test");
         }
 
-        final Compiler compiler = new Compiler(sdkPath, basedir, getLog());
+        final MonkeyCompiler compiler = new MonkeyCompiler(sdkPath, basedir, getLog());
 
         if (!projectSrcRoot.exists()) {
             getLog().info("No sources found to compile");
@@ -62,17 +46,5 @@ public class MonkeyCompileMojo extends AbstractMonkeyMojo {
             final File testTarget = new File(this.projectBuildDirectory, this.targetFileName + "-test.prg");
             compiler.compile(Arrays.asList(projectSrcRoot, projectTestRoot), testManifest, testTarget);
         }
-    }
-
-    public void setBasedir(File basedir) {
-        this.basedir = basedir;
-    }
-
-    public void setProjectBuildDirectory(File projectBuildDirectory) {
-        this.projectBuildDirectory = projectBuildDirectory;
-    }
-
-    public void setTargetFileName(String targetFileName) {
-        this.targetFileName = targetFileName;
     }
 }

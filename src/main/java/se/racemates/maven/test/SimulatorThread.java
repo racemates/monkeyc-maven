@@ -1,4 +1,4 @@
-package se.racemates.maven;
+package se.racemates.maven.test;
 
 class SimulatorThread extends Thread {
 

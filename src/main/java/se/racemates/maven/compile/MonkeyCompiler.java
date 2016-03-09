@@ -1,7 +1,8 @@
-package se.racemates.maven;
+package se.racemates.maven.compile;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+import se.racemates.maven.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,13 +11,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Compiler {
+public class MonkeyCompiler {
 
     private final String compilerPath;
     private final File executionDir;
     private final Log log;
 
-    public Compiler(final String sdkPath, final File executionDir, final Log log) {
+    public MonkeyCompiler(final String sdkPath, final File executionDir, final Log log) {
         this.compilerPath = getCompilerPath(sdkPath);
         this.executionDir = executionDir;
         this.log = log;

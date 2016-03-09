@@ -5,6 +5,8 @@ import org.apache.maven.plugin.testing.MojoRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import se.racemates.maven.mojo.MonkeyCompileMojo;
+import se.racemates.maven.mojo.MonkeyTestMojo;
 
 import java.io.File;
 
@@ -35,12 +37,16 @@ public class MonkeyTestMojoTest {
         compile.execute();
 
         final MonkeyTestMojo test = (MonkeyTestMojo) mojoRule.lookupMojo("test", "src/test/resources/mc/logsome/pom.xml");
+
         final TestLog log = new TestLog();
         test.setLog(log);
-        final File outputFile = new File(targetFolder, "monkey-reports/monkey-report.txt");
-        test.setOutputFile(outputFile);
-        final String targetTestFileName = targetFileName + "-test.prg";
-        test.setTargetFileName(targetTestFileName);
+
+        final File testReportFile = new File(targetFolder, "monkey-reports/monkey-report.txt");
+
+        test.setTestReportFile(testReportFile);
+        test.setProjectBuildDirectory(targetFolder);
+        test.setTargetFileName(targetFileName);
+
 
         test.execute();
 
