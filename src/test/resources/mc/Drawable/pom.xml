@@ -31,8 +31,8 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <projectSrcRoot>target/test-classes/mc/drawable/main</projectSrcRoot>
-                    <projectTestRoot>target/test-classes/mc/drawable/test</projectTestRoot>
+                    <projectSrcRoot>target/test-classes/mc/Drawable/main</projectSrcRoot>
+                    <projectTestRoot>target/test-classes/mc/Drawable/test</projectTestRoot>
                 </configuration>
             </plugin>
         </plugins>

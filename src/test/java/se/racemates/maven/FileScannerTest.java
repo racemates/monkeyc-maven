@@ -13,7 +13,7 @@ public class FileScannerTest {
 
     @Test
     public void testFileScanner_shouldFindFiles() {
-        final String file = getClass().getClassLoader().getResource("mc/drawable/main/resources").getFile();
+        final String file = getClass().getClassLoader().getResource("mc/Drawable/main/resources").getFile();
         final FileScanner fileScanner = new FileScanner(new File(file), "xml");
         final List<File> files = fileScanner.scan();
         assertThat(files.size(), is(4));
