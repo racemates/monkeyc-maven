@@ -1,15 +1,10 @@
 package se.racemates.maven;
 
-import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.plugin.testing.MojoRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-
-import java.io.File;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -25,21 +20,21 @@ public class MonkeyCompileMojoTest {
 
     @Test
     public void testExecution_shouldSucced_whenBothSourceAndTest() throws Exception {
-        final Mojo compile = mojoRule.lookupMojo("compile", "src/test/resources/mc/Drawable/pom.xml");
+        final MonkeyCompileMojo compile = (MonkeyCompileMojo) mojoRule.lookupMojo("compile", "src/test/resources/mc/drawable/pom.xml");
         assertThat(compile, is(notNullValue()));
         compile.execute();
     }
 
     @Test
     public void testExecution_shouldSucced_whenOnlySource() throws Exception {
-        final Mojo compile = mojoRule.lookupMojo("compile", "src/test/resources/mc/only-sources/pom.xml");
+        final MonkeyCompileMojo compile = (MonkeyCompileMojo) mojoRule.lookupMojo("compile", "src/test/resources/mc/only-sources/pom.xml");
         assertThat(compile, is(notNullValue()));
         compile.execute();
     }
 
     @Test
     public void testExecution_shouldFail_whenEmptyProject() throws Exception {
-        final Mojo compile = mojoRule.lookupMojo("compile", "src/test/resources/mc/empty/pom.xml");
+        final MonkeyCompileMojo compile = (MonkeyCompileMojo) mojoRule.lookupMojo("compile", "src/test/resources/mc/empty/pom.xml");
         assertThat(compile, is(notNullValue()));
         expectedException.expect(MojoExecutionException.class);
         compile.execute();
@@ -47,7 +42,7 @@ public class MonkeyCompileMojoTest {
 
     @Test
     public void testExecution_shouldFail() throws Exception {
-        final Mojo compile = mojoRule.lookupMojo("compile", "src/test/resources/mc/Failable/pom.xml");
+        final MonkeyCompileMojo compile = (MonkeyCompileMojo) mojoRule.lookupMojo("compile", "src/test/resources/mc/failable/pom.xml");
         assertThat(compile, is(notNullValue()));
         expectedException.expect(MojoExecutionException.class);
         compile.execute();

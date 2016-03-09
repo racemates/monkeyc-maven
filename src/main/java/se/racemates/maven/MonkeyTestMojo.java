@@ -12,8 +12,7 @@ import java.io.*;
 @Mojo(name = "test", defaultPhase = LifecyclePhase.TEST,
         requiresOnline = false, requiresProject = true,
         threadSafe = false)
-public class MonkeyTestMojo
-        extends AbstractMojo {
+public class MonkeyTestMojo extends AbstractMonkeyMojo {
 
     public static final int RETRIES = 30;
     public static final int WAIT_FOR_OUTPUT_MILLIS = 500;
@@ -89,6 +88,8 @@ public class MonkeyTestMojo
 
         int timeout = 0;
 
+        final StringBuilder output = new StringBuilder();
+
         while (timeout++ < RETRIES) {
 
             if (simulatorRunner.hasProgramFailed()) {
@@ -100,6 +101,8 @@ public class MonkeyTestMojo
                 timeout = 0;
 
                 final String line = bufferedReader.readLine();
+                output.append(line);
+                output.append("\n");
 
                 if (line.startsWith("-->EOF")) {
                     fileWriter.close();
@@ -129,7 +132,15 @@ public class MonkeyTestMojo
             }
         }
 
-        throw new MojoFailureException("Waiting for test result timed out");
+        throw new MojoFailureException("Waiting for test result timed out \n" + output.toString());
 
+    }
+
+    public void setOutputFile(File outputFile) {
+        this.outputFile = outputFile;
+    }
+
+    public void setTargetFileName(String targetFileName) {
+        this.targetFileName = targetFileName;
     }
 }

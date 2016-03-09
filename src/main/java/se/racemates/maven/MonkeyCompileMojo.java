@@ -17,13 +17,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Mojo(name = "compile", defaultPhase = LifecyclePhase.COMPILE)
-public class MonkeyCompileMojo extends AbstractMojo {
-
-    @Parameter(property = "projectSrcRoot", readonly = true)
-    private File projectSrcRoot;
-
-    @Parameter(property = "projectTestRoot", readonly = true)
-    private File projectTestRoot;
+public class MonkeyCompileMojo extends AbstractMonkeyMojo {
 
     @Parameter(defaultValue = "${project.basedir}", readonly = true)
     private File basedir;
@@ -68,5 +62,17 @@ public class MonkeyCompileMojo extends AbstractMojo {
             final File testTarget = new File(this.projectBuildDirectory, this.targetFileName + "-test.prg");
             compiler.compile(Arrays.asList(projectSrcRoot, projectTestRoot), testManifest, testTarget);
         }
+    }
+
+    public void setBasedir(File basedir) {
+        this.basedir = basedir;
+    }
+
+    public void setProjectBuildDirectory(File projectBuildDirectory) {
+        this.projectBuildDirectory = projectBuildDirectory;
+    }
+
+    public void setTargetFileName(String targetFileName) {
+        this.targetFileName = targetFileName;
     }
 }
