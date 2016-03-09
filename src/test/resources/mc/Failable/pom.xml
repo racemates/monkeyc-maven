@@ -21,7 +21,7 @@
             <plugin>
                 <groupId>se.racemates.maven</groupId>
                 <artifactId>monkeyc-maven</artifactId>
-                <version>1.1-SNAPSHOT</version>
+                <version>1.3-SNAPSHOT</version>
                 <executions>
                     <execution>
                         <id>monkeytest</id>
@@ -31,7 +31,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <projectSrcRoot>target/test-classes/mc/Failable</projectSrcRoot>
+                    <projectSrcRoot>target/test-classes/mc/failable</projectSrcRoot>
                 </configuration>
             </plugin>
         </plugins>

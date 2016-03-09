@@ -1,20 +1,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>se.racemates.maven</groupId>
-    <artifactId>runnable</artifactId>
-    <packaging>jar</packaging>
+    <groupId>se.racemates.test</groupId>
+    <artifactId>logsome</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>test</name>
-
-    <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
 
     <build>
         <plugins>
@@ -24,15 +13,16 @@
                 <version>1.3-SNAPSHOT</version>
                 <executions>
                     <execution>
-                        <id>monkeytest</id>
+                        <id>monkeyc-maven</id>
                         <goals>
                             <goal>compile</goal>
+				            <goal>test</goal>
                         </goals>
                     </execution>
                 </executions>
                 <configuration>
-                    <projectSrcRoot>target/test-classes/mc/drawable/main</projectSrcRoot>
-                    <projectTestRoot>target/test-classes/mc/drawable/test</projectTestRoot>
+                    <projectSrcRoot>src/test/resources/mc/logsome/main</projectSrcRoot>
+                    <projectTestRoot>src/test/resources/mc/logsome/test</projectTestRoot>
                 </configuration>
             </plugin>
         </plugins>
