@@ -40,6 +40,6 @@ public class MonkeyDistributeMojo extends AbstractMonkeyMojo {
     }
 
     private File getTarget(final Device device) {
-        return new File(this.projectBuildDirectory, this.targetFileName + "-" + device.getName() + "-" + MAIN_BIN_SUFFIX);
+        return new File(this.projectBuildDirectory, this.targetFileName + "-" + device.getName() + MAIN_BIN_SUFFIX);
     }
 }
