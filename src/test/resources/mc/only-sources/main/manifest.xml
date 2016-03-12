@@ -4,6 +4,7 @@
 
         <iq:products>
             <iq:product id="square_watch"/>
+            <iq:product id="round_watch"/>
         </iq:products>
 
         <iq:permissions>

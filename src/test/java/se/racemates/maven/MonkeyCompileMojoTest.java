@@ -52,7 +52,7 @@ public class MonkeyCompileMojoTest {
         compile.setBasedir(baseDirectory);
         compile.setProjectBuildDirectory(targetFolder);
         compile.setTargetFileName(targetFileName);
-        
+
         assertThat(compile, is(notNullValue()));
         compile.execute();
     }

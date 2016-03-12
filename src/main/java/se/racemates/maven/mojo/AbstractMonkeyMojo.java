@@ -30,6 +30,8 @@ public abstract class AbstractMonkeyMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project.build.finalName}", required = true, readonly = true)
     protected String targetFileName;
+    @Parameter(property = "mainManifestPath", readonly = true, required = false)
+    protected File mainManifestPath;
 
     protected String getTestFilePath() {
         return this.projectBuildDirectory + "/" + this.targetFileName + TEST_BIN_SUFFIX;
@@ -77,5 +79,13 @@ public abstract class AbstractMonkeyMojo extends AbstractMojo {
 
     public void setTargetFileName(final String targetFileName) {
         this.targetFileName = targetFileName;
+    }
+
+    protected File getManifest() {
+        if (this.mainManifestPath != null) {
+            return this.mainManifestPath;
+        } else {
+            return new File(this.projectSrcRoot, MANIFEST_FILE_NAME);
+        }
     }
 }

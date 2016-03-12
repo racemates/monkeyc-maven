@@ -13,9 +13,6 @@ import java.util.Arrays;
 @Mojo(name = "compile", defaultPhase = LifecyclePhase.COMPILE)
 public class MonkeyCompileMojo extends AbstractMonkeyMojo {
 
-    @Parameter(property = "mainManifestPath", readonly = true, required = false)
-    protected File mainManifestPath;
-
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         super.execute();
@@ -28,14 +25,6 @@ public class MonkeyCompileMojo extends AbstractMonkeyMojo {
             final File mainManifest = getManifest();
             final File mainTarget = new File(this.projectBuildDirectory, this.targetFileName + MAIN_BIN_SUFFIX);
             compiler.compile(Arrays.asList(this.projectSrcRoot), mainManifest, mainTarget);
-        }
-    }
-
-    private File getManifest() {
-        if (this.mainManifestPath != null) {
-            return this.mainManifestPath;
-        } else {
-            return new File(this.projectSrcRoot, MANIFEST_FILE_NAME);
         }
     }
 }
