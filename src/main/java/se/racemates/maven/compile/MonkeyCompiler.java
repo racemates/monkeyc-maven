@@ -3,6 +3,7 @@ package se.racemates.maven.compile;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import se.racemates.maven.*;
+import se.racemates.maven.distribute.Device;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,31 +27,30 @@ public class MonkeyCompiler {
     public void compile(
             final Collection<File> projectDirs,
             final File manifest,
+            final File target,
+            final Device device) throws MojoExecutionException {
+
+        final CompilerCommandsBuilder builder = getDefaultCompilerCommandsBuilder(projectDirs, manifest, target);
+        builder.device(device.getName());
+
+        compile(builder);
+    }
+
+    public void compile(
+            final Collection<File> projectDirs,
+            final File manifest,
             final File target) throws MojoExecutionException {
 
-        final List<File> sourceDirectories = getDirectories(projectDirs, "source");
-        final List<File> sourceFiles = getFiles(sourceDirectories, "mc");
+        final CompilerCommandsBuilder builder = getDefaultCompilerCommandsBuilder(projectDirs, manifest, target);
 
-        final DependencyHelper dependencyHelper = new DependencyHelper(sourceFiles);
-        final List<FileInfo> fileInfos = dependencyHelper.sortDependencies();
-        final List<File> sortedSources = fileInfos
-                .stream()
-                .map(FileInfo::getFile)
-                .collect(Collectors.toList());
+        compile(builder);
+    }
 
-        final List<File> resourceDirectories = getDirectories(projectDirs, "resources");
-        final List<File> resourceFiles = getFiles(resourceDirectories, "xml");
-
-        final CompilerCommandsBuilder commandsBuilder = new CompilerCommandsBuilder(this.sdkPath);
-        commandsBuilder
-                .manifest(manifest)
-                .target(target)
-                .sources(sortedSources)
-                .resources(resourceFiles);
+    private void compile(CompilerCommandsBuilder compilerCommandsBuilder) throws MojoExecutionException {
 
         final ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder
-                .command(commandsBuilder.build())
+                .command(compilerCommandsBuilder.build())
                 .directory(this.executionDir);
 
         try {
@@ -74,6 +74,34 @@ public class MonkeyCompiler {
         } catch (final InterruptedException e) {
             throw new MojoExecutionException("Unable to wait for process: " + e.getMessage(), e);
         }
+    }
+
+    private CompilerCommandsBuilder getDefaultCompilerCommandsBuilder(
+            final Collection<File> projectDirs,
+            final File manifest,
+            final File target) {
+
+        final List<File> sourceDirectories = getDirectories(projectDirs, "source");
+        final List<File> sourceFiles = getFiles(sourceDirectories, "mc");
+
+        final DependencyHelper dependencyHelper = new DependencyHelper(sourceFiles);
+        final List<FileInfo> fileInfos = dependencyHelper.sortDependencies();
+        final List<File> sortedSources = fileInfos
+                .stream()
+                .map(FileInfo::getFile)
+                .collect(Collectors.toList());
+
+        final List<File> resourceDirectories = getDirectories(projectDirs, "resources");
+        final List<File> resourceFiles = getFiles(resourceDirectories, "xml");
+
+        final CompilerCommandsBuilder commandsBuilder = new CompilerCommandsBuilder(this.sdkPath);
+        commandsBuilder
+                .manifest(manifest)
+                .target(target)
+                .sources(sortedSources)
+                .resources(resourceFiles);
+
+        return commandsBuilder;
     }
 
     private List<File> getFiles(final Collection<File> directories, final String fileType) {

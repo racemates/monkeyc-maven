@@ -33,10 +33,6 @@ public abstract class AbstractMonkeyMojo extends AbstractMojo {
     @Parameter(property = "mainManifestPath", readonly = true, required = false)
     protected File mainManifestPath;
 
-    protected String getTestFilePath() {
-        return this.projectBuildDirectory + "/" + this.targetFileName + TEST_BIN_SUFFIX;
-    }
-
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
 
@@ -79,6 +75,10 @@ public abstract class AbstractMonkeyMojo extends AbstractMojo {
 
     public void setTargetFileName(final String targetFileName) {
         this.targetFileName = targetFileName;
+    }
+
+    protected String getTestFilePath() {
+        return this.projectBuildDirectory + "/" + this.targetFileName + TEST_BIN_SUFFIX;
     }
 
     protected File getManifest() {
