@@ -14,6 +14,7 @@ public class SimulatorRunner implements Closeable {
     public static final int PORT_SCAN_START = 1234;
     public static final int PORT_SCAN_END = 1239;
     public static final int SLEEP_TIME_BETWEEN_TRIES_TO_FIND_SIMULATOR = 500;
+    private static final String SIMULATION_DEVICE_ID = "vivoactive_hr";
     private Process simulatorProcess;
     private Process programProcess;
     private final Log log;
@@ -186,7 +187,8 @@ public class SimulatorRunner implements Closeable {
                         "--transport=tcp",
                         "--transport_args=127.0.0.1:" + port,
                         "tvm",
-                        "0:/GARMIN/APPS/" + name
+                        "0:/GARMIN/APPS/" + name,
+                        SIMULATION_DEVICE_ID
                 )
                 .start();
     }
