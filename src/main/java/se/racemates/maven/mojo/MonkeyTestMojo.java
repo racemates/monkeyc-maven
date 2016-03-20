@@ -134,4 +134,8 @@ public class MonkeyTestMojo extends AbstractMonkeyMojo {
     public void setTestReportFile(final File testReportFile) {
         this.testReportFile = testReportFile;
     }
+
+    public void setRunOnce(boolean runOnce) {
+        this.runOnce = runOnce;
+    }
 }

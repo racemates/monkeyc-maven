@@ -139,16 +139,17 @@ public class SimulatorRunner implements Closeable {
     }
 
     public void killProgramProcess() {
-        kippProcessIfActive(this.programProcess);
+        killProcessIfActive(this.programProcess);
     }
 
     public void killSimulatorProcess() {
-        kippProcessIfActive(this.simulatorProcess);
+        killProcessIfActive(this.simulatorProcess);
     }
 
-    private void kippProcessIfActive(final Process process) {
+    private void killProcessIfActive(final Process process) {
         if (process != null && process.isAlive()) {
-            process.destroy();
+            this.log.debug("Destroying forcible");
+            process.destroyForcibly();
         }
     }
 
@@ -197,6 +198,7 @@ public class SimulatorRunner implements Closeable {
     public void close() throws IOException {
         killProgramProcess();
         if (this.runOnce) {
+            this.log.debug("Killing simulator process");
             killSimulatorProcess();
         }
     }

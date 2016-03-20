@@ -40,6 +40,7 @@ public class MonkeyTestMojoTest {
         test.setTestReportFile(testReportFile);
         test.setProjectBuildDirectory(targetFolder);
         test.setTargetFileName(targetFileName);
+        test.setRunOnce(true);
 
 
         test.execute();
