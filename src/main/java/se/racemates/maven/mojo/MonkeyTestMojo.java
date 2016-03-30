@@ -114,10 +114,6 @@ public class MonkeyTestMojo extends AbstractMonkeyMojo {
                     fileWriter.write(reportLine);
                     getLog().info(reportLine);
                 }
-
-                if (line == null) {
-                    throw new MojoFailureException("Unexpected exit from program.");
-                }
             }
 
             try {

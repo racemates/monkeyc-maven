@@ -8,7 +8,7 @@ import se.racemates.maven.distribute.Device;
 import se.racemates.maven.distribute.ManifestParser;
 
 import java.io.File;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Mojo(name = "distribute")
@@ -26,7 +26,7 @@ public class MonkeyDistributeMojo extends AbstractMonkeyMojo {
         if (!this.projectSrcRoot.exists()) {
             getLog().info("No sources found to compile");
         } else {
-            final List<File> sources = Arrays.asList(this.projectSrcRoot);
+            final List<File> sources = Collections.singletonList(this.projectSrcRoot);
             manifestParser.getDevices().forEach(device -> {
                 final File target = getTarget(device);
                 try {
