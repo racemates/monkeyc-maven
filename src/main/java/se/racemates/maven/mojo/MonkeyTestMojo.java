@@ -9,7 +9,12 @@ import se.racemates.maven.compile.MonkeyCompiler;
 import se.racemates.maven.test.SimulatorRunner;
 
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.UUID;
 
 @Mojo(name = "test", defaultPhase = LifecyclePhase.TEST,
         requiresOnline = false, requiresProject = true,
@@ -40,10 +45,33 @@ public class MonkeyTestMojo extends AbstractMonkeyMojo {
         if (!this.projectTestRoot.exists()) {
             getLog().info("No test sources found to compile");
         } else {
-            final File testManifest = new File(this.projectTestRoot, MANIFEST_FILE_NAME);
+            final File testManifest = getManifestWithReplacedId();
+
             final File testTarget = new File(this.projectBuildDirectory, this.targetFileName + TEST_BIN_SUFFIX);
             compiler.compile(Arrays.asList(this.projectSrcRoot, this.projectTestRoot), testManifest, testTarget);
             runSimulator();
+        }
+    }
+
+    private File getManifestWithReplacedId() throws MojoExecutionException {
+        try {
+            final File testManifest = new File(this.projectTestRoot, MANIFEST_FILE_NAME);
+            Charset charset = StandardCharsets.UTF_8;
+
+            String content = new String(Files.readAllBytes(testManifest.toPath()), charset);
+            content = content.replace("00000000-0000-0000-0000-000000000000",
+                                      UUID
+                                              .randomUUID().toString());
+            final File modifiedManifest = new File(
+                    this.projectBuildDirectory,
+                    testManifest.getName()
+            );
+            Path modifiedFile = Files.write(modifiedManifest.toPath(), content.getBytes(charset));
+
+            return modifiedFile.toFile();
+
+        } catch (IOException e) {
+            throw new MojoExecutionException("Error processing manifest", e);
         }
     }
 
