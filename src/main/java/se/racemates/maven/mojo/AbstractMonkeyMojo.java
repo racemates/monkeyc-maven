@@ -41,7 +41,7 @@ public abstract class AbstractMonkeyMojo extends AbstractMojo {
         }
 
         if (this.sdkPath == null) {
-            throw new MojoExecutionException("You need to set up sdkPath to point to your garmin sdk.");
+            throw new MojoExecutionException("You need to set up environment variable GARMIN_HOME to point to your garmin sdk.");
         }
 
         getLog().info("sdkPath is: " + this.sdkPath);
