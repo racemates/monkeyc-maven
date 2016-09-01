@@ -25,6 +25,11 @@ public class CompilerCommandsBuilder {
         return this;
     }
 
+    public CompilerCommandsBuilder key(final File key) {
+        this.index.put("-z", key.getAbsolutePath());
+        return this;
+    }
+
     public CompilerCommandsBuilder target(final File target) {
         this.index.put("-o", target.getAbsolutePath());
         return this;

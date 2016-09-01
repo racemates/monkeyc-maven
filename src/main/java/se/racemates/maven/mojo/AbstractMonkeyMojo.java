@@ -1,17 +1,19 @@
 package se.racemates.maven.mojo;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
+import java.util.Collection;
 
 public abstract class AbstractMonkeyMojo extends AbstractMojo {
 
-    protected static final String MAIN_BIN_SUFFIX = ".prg";
-    protected static final String TEST_BIN_SUFFIX = "-test.prg";
-    protected static final String MANIFEST_FILE_NAME = "manifest.xml";
+    static final String MAIN_BIN_SUFFIX = ".prg";
+    static final String TEST_BIN_SUFFIX = "-test.prg";
+    static final String MANIFEST_FILE_NAME = "manifest.xml";
 
     @Parameter
     protected String sdkPath;
@@ -32,6 +34,8 @@ public abstract class AbstractMonkeyMojo extends AbstractMojo {
     protected String targetFileName;
     @Parameter(property = "mainManifestPath", readonly = true, required = false)
     protected File mainManifestPath;
+    @Parameter(property = "keyPath", readonly = true, required = false)
+    protected File keyPath;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
@@ -86,6 +90,18 @@ public abstract class AbstractMonkeyMojo extends AbstractMojo {
             return this.mainManifestPath;
         } else {
             return new File(this.projectSrcRoot, MANIFEST_FILE_NAME);
+        }
+    }
+
+    protected File getKey() throws MojoExecutionException {
+        if (this.keyPath != null) {
+            return this.keyPath;
+        } else {
+            final Collection<File> files = FileUtils.listFiles(basedir, new String[]{"der"}, false);
+            if (files.isEmpty()) {
+                throw new MojoExecutionException("You have to set keyPah");
+            }
+            return files.iterator().next();
         }
     }
 }

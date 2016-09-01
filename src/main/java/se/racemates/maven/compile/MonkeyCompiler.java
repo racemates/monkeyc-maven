@@ -2,12 +2,10 @@ package se.racemates.maven.compile;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
-import se.racemates.maven.*;
 import se.racemates.maven.distribute.Device;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,10 +25,10 @@ public class MonkeyCompiler {
     public void compile(
             final Collection<File> projectDirs,
             final File manifest,
-            final File target,
+            File key, final File target,
             final Device device) throws MojoExecutionException {
 
-        final CompilerCommandsBuilder builder = getDefaultCompilerCommandsBuilder(projectDirs, manifest, target);
+        final CompilerCommandsBuilder builder = getDefaultCompilerCommandsBuilder(projectDirs, manifest, key, target);
         builder.device(device.getName());
 
         compile(builder);
@@ -39,9 +37,9 @@ public class MonkeyCompiler {
     public void compile(
             final Collection<File> projectDirs,
             final File manifest,
-            final File target) throws MojoExecutionException {
+            File key, final File target) throws MojoExecutionException {
 
-        final CompilerCommandsBuilder builder = getDefaultCompilerCommandsBuilder(projectDirs, manifest, target);
+        final CompilerCommandsBuilder builder = getDefaultCompilerCommandsBuilder(projectDirs, manifest, key, target);
 
         compile(builder);
     }
@@ -79,6 +77,7 @@ public class MonkeyCompiler {
     private CompilerCommandsBuilder getDefaultCompilerCommandsBuilder(
             final Collection<File> projectDirs,
             final File manifest,
+            final File key,
             final File target) {
 
         final List<File> sourceDirectories = getDirectories(projectDirs, "source");
@@ -96,6 +95,7 @@ public class MonkeyCompiler {
 
         final CompilerCommandsBuilder commandsBuilder = new CompilerCommandsBuilder(this.sdkPath);
         commandsBuilder
+                .key(key)
                 .manifest(manifest)
                 .target(target)
                 .sources(sortedSources)
@@ -108,7 +108,7 @@ public class MonkeyCompiler {
         return directories
                 .stream()
                 .map(file -> new FileScanner(file, fileType).scan())
-                .flatMap(files -> files.stream())
+                .flatMap(Collection::stream)
                 .collect(Collectors.toList());
     }
 

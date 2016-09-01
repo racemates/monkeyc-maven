@@ -48,7 +48,7 @@ public class MonkeyTestMojo extends AbstractMonkeyMojo {
             final File testManifest = getManifestWithReplacedId();
 
             final File testTarget = new File(this.projectBuildDirectory, this.targetFileName + TEST_BIN_SUFFIX);
-            compiler.compile(Arrays.asList(this.projectSrcRoot, this.projectTestRoot), testManifest, testTarget);
+            compiler.compile(Arrays.asList(this.projectSrcRoot, this.projectTestRoot), testManifest, getKey(), testTarget);
             runSimulator();
         }
     }

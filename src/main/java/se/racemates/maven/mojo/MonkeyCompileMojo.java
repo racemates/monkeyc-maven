@@ -23,7 +23,7 @@ public class MonkeyCompileMojo extends AbstractMonkeyMojo {
         } else {
             final File mainManifest = getManifest();
             final File mainTarget = new File(this.projectBuildDirectory, this.targetFileName + MAIN_BIN_SUFFIX);
-            compiler.compile(Collections.singletonList(this.projectSrcRoot), mainManifest, mainTarget);
+            compiler.compile(Collections.singletonList(this.projectSrcRoot), mainManifest, getKey(), mainTarget);
         }
     }
 }

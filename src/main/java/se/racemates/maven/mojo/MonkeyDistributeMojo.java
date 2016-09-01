@@ -19,6 +19,7 @@ public class MonkeyDistributeMojo extends AbstractMonkeyMojo {
         super.execute();
 
         final File manifest = getManifest();
+        final File key = getKey();
         final ManifestParser manifestParser = new ManifestParser(manifest);
 
         final MonkeyCompiler compiler = new MonkeyCompiler(this.sdkPath, this.projectBuildDirectory, getLog());
@@ -31,7 +32,7 @@ public class MonkeyDistributeMojo extends AbstractMonkeyMojo {
                 final File target = getTarget(device);
                 try {
                     getLog().info("Building executable for device: " + device);
-                    compiler.compile(sources, manifest, target, device);
+                    compiler.compile(sources, manifest, key, target, device);
                 } catch (MojoExecutionException e) {
                     throw new RuntimeException("Unable to build artifact for device: " + device, e);
                 }
@@ -42,4 +43,5 @@ public class MonkeyDistributeMojo extends AbstractMonkeyMojo {
     private File getTarget(final Device device) {
         return new File(this.projectBuildDirectory, this.targetFileName + "-" + device.getName() + MAIN_BIN_SUFFIX);
     }
+
 }
