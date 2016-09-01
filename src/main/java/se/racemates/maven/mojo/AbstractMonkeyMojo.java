@@ -101,12 +101,12 @@ public abstract class AbstractMonkeyMojo extends AbstractMojo {
     protected File getKey() throws MojoExecutionException {
         if (this.keyPath != null) {
             return this.keyPath;
-        } else {
+        } else if (this.basedir != null) {
             final Collection<File> files = FileUtils.listFiles(basedir, new String[]{"der"}, false);
-            if (files.isEmpty()) {
-                throw new MojoExecutionException("You have to set keyPah");
+            if (!files.isEmpty()) {
+                return files.iterator().next();
             }
-            return files.iterator().next();
         }
+        throw new MojoExecutionException("You have to set keyPath");
     }
 }
