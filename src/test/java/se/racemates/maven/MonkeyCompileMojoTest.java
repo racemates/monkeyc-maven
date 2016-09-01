@@ -34,6 +34,7 @@ public class MonkeyCompileMojoTest {
         final File targetFolder = temporaryFolder.newFolder();
 
         final MonkeyCompileMojo compile = (MonkeyCompileMojo) mojoRule.lookupMojo("compile", "src/test/resources/mc/Drawable/pom.xml");
+        compile.setKeyPath(Utils.getResource("mc/developer_key.der"));
         compile.setBasedir(baseDirectory);
         compile.setProjectBuildDirectory(targetFolder);
         compile.setTargetFileName(targetFileName);
@@ -49,6 +50,7 @@ public class MonkeyCompileMojoTest {
         final File targetFolder = temporaryFolder.newFolder();
 
         final MonkeyCompileMojo compile = (MonkeyCompileMojo) mojoRule.lookupMojo("compile", "src/test/resources/mc/only-sources/pom.xml");
+        compile.setKeyPath(Utils.getResource("mc/developer_key.der"));
         compile.setBasedir(baseDirectory);
         compile.setProjectBuildDirectory(targetFolder);
         compile.setTargetFileName(targetFileName);

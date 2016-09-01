@@ -36,6 +36,7 @@ public class MonkeyTestMojoTest {
 
         final File testReportFile = new File(targetFolder, "monkey-reports/monkey-report.txt");
 
+        test.setKeyPath(Utils.getResource("mc/developer_key.der"));
         test.setBasedir(baseDirectory);
         test.setTestReportFile(testReportFile);
         test.setProjectBuildDirectory(targetFolder);

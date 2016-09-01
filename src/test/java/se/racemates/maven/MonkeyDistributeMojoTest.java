@@ -28,6 +28,7 @@ public class MonkeyDistributeMojoTest {
 
         final MonkeyDistributeMojo distribute = (MonkeyDistributeMojo) mojoRule.lookupMojo("distribute", "src/test/resources/mc/only-sources/pom.xml");
         distribute.setBasedir(baseDirectory);
+        distribute.setKeyPath(Utils.getResource("mc/developer_key.der"));
         distribute.setProjectBuildDirectory(targetFolder);
         distribute.setTargetFileName(targetFileName);
 

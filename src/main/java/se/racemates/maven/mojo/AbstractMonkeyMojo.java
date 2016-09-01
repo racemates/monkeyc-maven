@@ -32,8 +32,10 @@ public abstract class AbstractMonkeyMojo extends AbstractMojo {
 
     @Parameter(defaultValue = "${project.build.finalName}", required = true, readonly = true)
     protected String targetFileName;
+
     @Parameter(property = "mainManifestPath", readonly = true, required = false)
     protected File mainManifestPath;
+
     @Parameter(property = "keyPath", readonly = true, required = false)
     protected File keyPath;
 
@@ -69,6 +71,9 @@ public abstract class AbstractMonkeyMojo extends AbstractMojo {
         this.projectTestRoot = projectTestRoot;
     }
 
+    public void setKeyPath(File keyPath) {
+        this.keyPath = keyPath;
+    }
     public void setBasedir(final File basedir) {
         this.basedir = basedir;
     }
