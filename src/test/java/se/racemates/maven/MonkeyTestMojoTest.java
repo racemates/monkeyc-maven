@@ -27,7 +27,7 @@ public class MonkeyTestMojoTest {
 
         final String targetFileName = "logsome";
         final File baseDirectory = temporaryFolder.newFolder();
-        final File targetFolder = temporaryFolder.newFolder();
+        final File targetFolder = new File("/tmp");
 
         final MonkeyTestMojo test = (MonkeyTestMojo) mojoRule.lookupMojo("test", "src/test/resources/mc/logsome/pom.xml");
 
