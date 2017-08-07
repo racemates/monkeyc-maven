@@ -2,7 +2,7 @@
     <iq:application entry="logsomeApp" id="F65E0AEF10DD4DD89E7D14D3E1EA11BD" launcherIcon="@Drawables.LauncherIcon" minSdkVersion="1.2.1" name="@Strings.AppName" type="watchface">
 
         <iq:products>
-            <iq:product id="square_watch"/>
+            <iq:product id="vivoactive_hr"/>
         </iq:products>
 
         <iq:permissions>

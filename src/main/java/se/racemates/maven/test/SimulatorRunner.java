@@ -5,15 +5,11 @@ import org.apache.maven.plugin.logging.Log;
 import se.racemates.maven.Util;
 
 import java.io.Closeable;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
 public class SimulatorRunner implements Closeable {
 
-    public static final int PORT_SCAN_START = 1234;
-    public static final int PORT_SCAN_END = 1239;
-    public static final int SLEEP_TIME_BETWEEN_TRIES_TO_FIND_SIMULATOR = 500;
     private static final String SIMULATION_DEVICE_ID = "vivoactive_hr";
     private Process simulatorProcess;
     private Process programProcess;
@@ -48,47 +44,22 @@ public class SimulatorRunner implements Closeable {
             final String sdkPath,
             final String programFile
     ) throws MojoExecutionException {
-
-        for (@SuppressWarnings("LocalCanBeFinal") int tries = 0; tries < 5; tries++) {
-            Process transferFile;
-            for (int port = PORT_SCAN_START; port < PORT_SCAN_END; port++) {
-                try {
-                    transferFile = pushProgram(
-                            port,
-                            sdkPath,
-                            programFile
-                    );
-                    transferFile.waitFor();
-                    this.log.debug("Exit value from shell transfer file:" + transferFile.exitValue());
-                    if (transferFile.exitValue() == 0) {
-                        this.log.info("Pushed file " + programFile + " to simulator.");
-                        return startProgramProcess(
-                                sdkPath,
-                                programFile,
-                                port
-                        );
-                    }
-                    Thread.sleep(SLEEP_TIME_BETWEEN_TRIES_TO_FIND_SIMULATOR);
-                } catch (IOException | InterruptedException e) {
-                    throw new MojoExecutionException(
-                            "Failed to transfer file to simulator.",
-                            e
-                    );
-                }
-            }
+        try {
+            return startProgramProcess(
+                    sdkPath,
+                    programFile
+            );
+        } catch (final IOException e) {
+            throw new MojoExecutionException("Failed to start program.", e);
         }
-
-        throw new MojoExecutionException("Failed to transfer file to simulator.");
     }
 
     private Process startProgramProcess(
             final String sdkPath,
-            final String programFile,
-            final int port
+            final String programFile
     ) throws IOException {
 
         final Process startProgram = startProgram(
-                port,
                 sdkPath,
                 programFile
         );
@@ -99,19 +70,16 @@ public class SimulatorRunner implements Closeable {
         );
         errorGobbler.start();
 
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    startProgram.waitFor();
-                    if (startProgram.exitValue() != 0) {
-                        SimulatorRunner.this.programFailed = true;
-                    }
-                } catch (final InterruptedException e) {
-                    throw new RuntimeException(e);
+        new Thread(() -> {
+            try {
+                startProgram.waitFor();
+                if (startProgram.exitValue() != 0) {
+                    SimulatorRunner.this.programFailed = true;
                 }
+            } catch (final InterruptedException e) {
+                throw new RuntimeException(e);
             }
-        }.start();
+        }).start();
 
         return startProgram;
     }
@@ -138,11 +106,11 @@ public class SimulatorRunner implements Closeable {
         new SimulatorThread(this.simulatorProcess).start();
     }
 
-    public void killProgramProcess() {
+    private void killProgramProcess() {
         killProcessIfActive(this.programProcess);
     }
 
-    public void killSimulatorProcess() {
+    private void killSimulatorProcess() {
         killProcessIfActive(this.simulatorProcess);
     }
 
@@ -153,43 +121,25 @@ public class SimulatorRunner implements Closeable {
         }
     }
 
-    private Process pushProgram(
-            final int port,
-            final String sdkPath,
-            final String programFile
-    ) throws IOException {
-
-        final String name = new File(programFile).getName();
-        this.log.debug("pushProgram port:" + port);
-
-        return new ProcessBuilder()
-                .command(
-                        Util.platformCommand(sdkPath + "/bin", "shell"),
-                        "--transport=tcp",
-                        "--transport_args=127.0.0.1:" + port,
-                        "push",
-                        "\"" + programFile + "\"",
-                        "0:/GARMIN/APPS/" + name
-                ).start();
-    }
-
     private Process startProgram(
-            final int port,
             final String sdkPath,
             final String programFile
     ) throws IOException {
 
-        final String name = new File(programFile).getName();
-        this.log.debug("name:" + name + " port:" + port);
+
 
         return new ProcessBuilder()
                 .command(
-                        Util.platformCommand(sdkPath + "/bin", "shell"),
-                        "--transport=tcp",
-                        "--transport_args=127.0.0.1:" + port,
-                        "tvm",
-                        "0:/GARMIN/APPS/" + name,
-                        SIMULATION_DEVICE_ID
+                        "java",
+                        "-classpath",
+                        sdkPath + "/bin/monkeybrains.jar",
+                        "com.garmin.monkeybrains.monkeydodeux.MonkeyDoDeux",
+                        "-f",
+                        "\"" + programFile + "\"",
+                        "-d",
+                        SIMULATION_DEVICE_ID,
+                        "-s",
+                        sdkPath + "/bin/shell"
                 )
                 .start();
     }

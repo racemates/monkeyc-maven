@@ -2,7 +2,7 @@
     <iq:application entry="logsomeAppTest" id="00000000-0000-0000-0000-000000000000" launcherIcon="@Drawables.LauncherIcon" name="@Strings.AppName" type="watch-app">
 
         <iq:products>
-            <iq:product id="vivoactive"/>
+            <iq:product id="vivoactive_hr"/>
         </iq:products>
 
         <iq:permissions>

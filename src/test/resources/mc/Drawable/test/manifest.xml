@@ -3,7 +3,7 @@
     <iq:application entry="MyAppTest" id="202A38AEC50E4B1C95A270F69D09AB02" launcherIcon="LauncherIcon" name="AppName" type="widget">
 
         <iq:products>
-            <iq:product id="square_watch"/>
+            <iq:product id="vivoactive_hr"/>
         </iq:products>
 
         <iq:permissions>
